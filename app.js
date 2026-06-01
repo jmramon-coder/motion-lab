@@ -168,10 +168,11 @@ const conceptTitle = document.querySelector("#concept-title");
 const conceptDefinition = document.querySelector("#concept-definition");
 const activeCategory = document.querySelector("#active-category");
 const playButton = document.querySelector("#play");
-const randomizeButton = document.querySelector("#randomize");
+const loopButton = document.querySelector("#loop");
 const reducedMotion = document.querySelector("#reduced-motion");
 const sheetToggle = document.querySelector("#sheet-toggle");
 const sheetTitle = document.querySelector(".sheet-header strong");
+const sheetSummary = document.querySelector("#sheet-summary");
 const sheetTabs = document.querySelectorAll(".sheet-tab");
 const sheetViews = document.querySelectorAll(".sheet-view");
 
@@ -184,6 +185,8 @@ const controls = {
 
 let activeGroup = 0;
 let activeTerm = flatTerms[0];
+let loopEnabled = false;
+let loopTimer = 0;
 
 function setSheetOpen(isOpen) {
   document.body.classList.toggle("sheet-open", isOpen);
@@ -233,6 +236,7 @@ function setActiveTerm(term, shouldPlay = true) {
   activeCategory.textContent = term.group;
   conceptTitle.textContent = term.name;
   conceptDefinition.textContent = term.definition;
+  sheetSummary.textContent = term.name;
   demoLabel.textContent = labelFor(term);
   renderCategories();
   renderTerms();
@@ -248,6 +252,7 @@ function labelFor(term) {
 }
 
 function playDemo() {
+  window.clearTimeout(loopTimer);
   const demo = activeTerm.demo;
   demoObject.className = "demo-object";
   demoStage.className = "demo-stage";
@@ -267,16 +272,26 @@ function playDemo() {
       if (demo === "parallax") {
         scrollWorld.classList.add("animate-parallax");
         demoObject.classList.add("animate-float");
+        scheduleLoop();
         return;
       }
       if (demo === "ripple") {
         tapTarget.classList.add("is-rippling");
         demoObject.classList.add("animate-press");
+        scheduleLoop();
         return;
       }
       demoObject.classList.add(`animate-${demo}`);
+      scheduleLoop();
     });
   });
+}
+
+function scheduleLoop() {
+  if (!loopEnabled) return;
+  const duration = Number(controls.duration.value);
+  const delay = Number(controls.delay.value);
+  loopTimer = window.setTimeout(playDemo, duration + delay + 220);
 }
 
 function syncControls() {
@@ -334,17 +349,22 @@ sheetTabs.forEach(tab => {
 
 search.addEventListener("input", renderTerms);
 playButton.addEventListener("click", playDemo);
+loopButton.addEventListener("click", () => {
+  loopEnabled = !loopEnabled;
+  loopButton.classList.toggle("is-active", loopEnabled);
+  loopButton.setAttribute("aria-pressed", String(loopEnabled));
+  if (loopEnabled) {
+    playDemo();
+  } else {
+    window.clearTimeout(loopTimer);
+  }
+});
 demoStage.addEventListener("click", playDemo);
 tapTarget.addEventListener("keydown", event => {
   if (event.key === "Enter" || event.key === " ") {
     event.preventDefault();
     playDemo();
   }
-});
-
-randomizeButton.addEventListener("click", () => {
-  const next = flatTerms[Math.floor(Math.random() * flatTerms.length)];
-  setActiveTerm(next);
 });
 
 reducedMotion.addEventListener("change", () => {

@@ -10,28 +10,23 @@
     <main class="app-shell">
       <section class="stage-panel" aria-labelledby="app-title">
         <header class="topbar">
-          <div>
-            <p class="eyebrow">motion.lab</p>
-            <h1 id="app-title">Motion Lab</h1>
+          <h1 class="brand" id="app-title">motion.lab</h1>
+          <div class="top-actions">
+            <button class="icon-button" id="play" type="button" aria-label="Play animation" title="Play">
+              <i data-lucide="play"></i>
+            </button>
+            <button class="icon-button" id="loop" type="button" aria-label="Loop animation" aria-pressed="false" title="Loop">
+              <i data-lucide="repeat-2"></i>
+            </button>
           </div>
-          <button class="icon-button" id="randomize" type="button" aria-label="Try a random concept" title="Random concept">
-            <i data-lucide="shuffle"></i>
-          </button>
         </header>
 
-        <div class="concept-card">
-          <div class="concept-copy">
+        <div class="demo-stage" id="demo-stage" aria-live="polite">
+          <div class="stage-caption">
             <p class="category-label" id="active-category">Entrances & Exits</p>
             <h2 id="concept-title">Fade in / Fade out</h2>
-            <p id="concept-definition">Element appears or disappears by changing opacity.</p>
+            <p class="sr-only" id="concept-definition">Element appears or disappears by changing opacity.</p>
           </div>
-          <button class="play-button" id="play" type="button">
-            <i data-lucide="play"></i>
-            <span>Play</span>
-          </button>
-        </div>
-
-        <div class="demo-stage" id="demo-stage" aria-live="polite">
           <div class="scroll-world" id="scroll-world">
             <div class="parallax back"></div>
             <div class="parallax mid"></div>
@@ -50,7 +45,7 @@
           <span class="grabber"></span>
           <span>
             <strong>Library</strong>
-            <small>Tap to browse vocabulary and controls</small>
+            <small id="sheet-summary">Fade in / Fade out</small>
           </span>
           <i data-lucide="chevron-up"></i>
         </button>
