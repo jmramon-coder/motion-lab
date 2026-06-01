@@ -40,25 +40,29 @@
 
       <aside class="bottom-sheet" id="bottom-sheet" aria-label="Animation learning panel">
         <div class="sheet-body" id="sheet-body">
-          <div class="search-row">
-            <label class="search-box">
-              <i data-lucide="search"></i>
-              <input id="search" type="search" placeholder="Search vocabulary">
-            </label>
+          <div class="panel-switch" role="tablist" aria-label="Panel view">
+            <button class="panel-switch-button is-active" id="library-tab" data-panel="library" type="button" role="tab" aria-selected="true" aria-controls="library-panel">
+              <i data-lucide="book-open"></i>
+              <span>Library</span>
+            </button>
+            <button class="panel-switch-button" id="controls-tab" data-panel="controls" type="button" role="tab" aria-selected="false" aria-controls="controls-panel">
+              <i data-lucide="sliders-horizontal"></i>
+              <span>Controls</span>
+            </button>
           </div>
 
-          <details class="panel-section control-section">
-            <summary>
-              <span>Controls</span>
-              <i data-lucide="chevron-down"></i>
-            </summary>
-            <div class="section-content">
+          <section class="panel-view is-active" id="library-panel" role="tabpanel" aria-labelledby="library-tab">
+            <div class="section-list" id="section-list" aria-label="Animation vocabulary"></div>
+          </section>
+
+          <section class="panel-view" id="controls-panel" role="tabpanel" aria-labelledby="controls-tab" hidden>
+            <div class="section-content controls-content">
               <div class="control-header">
-              <h2>Controls</h2>
-              <label class="switch">
-                <input id="reduced-motion" type="checkbox">
-                <span>Reduced</span>
-              </label>
+                <h2>Controls</h2>
+                <label class="switch">
+                  <input id="reduced-motion" type="checkbox">
+                  <span>Reduced</span>
+                </label>
               </div>
 
               <div class="control-grid">
@@ -87,9 +91,7 @@
                 <button class="segment" data-ease="cubic-bezier(.34,1.56,.64,1)" type="button">Springy</button>
               </div>
             </div>
-          </details>
-
-          <div class="section-list" id="section-list" aria-label="Animation vocabulary"></div>
+          </section>
         </div>
       </aside>
     </main>

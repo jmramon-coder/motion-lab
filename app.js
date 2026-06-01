@@ -157,7 +157,6 @@ const flatTerms = groups.flatMap((group, groupIndex) =>
 );
 
 const sectionList = document.querySelector("#section-list");
-const search = document.querySelector("#search");
 const demoObject = document.querySelector("#demo-object");
 const demoLabel = document.querySelector("#demo-label");
 const demoStage = document.querySelector("#demo-stage");
@@ -168,6 +167,8 @@ const activeCategory = document.querySelector("#active-category");
 const playButton = document.querySelector("#play");
 const loopButton = document.querySelector("#loop");
 const reducedMotion = document.querySelector("#reduced-motion");
+const panelSwitchButtons = document.querySelectorAll(".panel-switch-button");
+const panelViews = document.querySelectorAll(".panel-view");
 
 const controls = {
   duration: document.querySelector("#duration"),
@@ -181,16 +182,26 @@ let activeTerm = flatTerms[0];
 let loopEnabled = false;
 let loopTimer = 0;
 
+function switchPanel(panel) {
+  panelSwitchButtons.forEach(button => {
+    const isActive = button.dataset.panel === panel;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-selected", String(isActive));
+  });
+
+  panelViews.forEach(view => {
+    const isActive = view.id === `${panel}-panel`;
+    view.classList.toggle("is-active", isActive);
+    view.hidden = !isActive;
+  });
+}
+
 function renderLibrary() {
-  const query = search.value.trim().toLowerCase();
   const sections = groups.map((group, groupIndex) => {
     const terms = group.terms
-      .map(([name, definition, demo]) => ({ name, definition, demo, group: group.name, groupIndex }))
-      .filter(term => !query || `${term.name} ${term.definition} ${term.group}`.toLowerCase().includes(query));
+      .map(([name, definition, demo]) => ({ name, definition, demo, group: group.name, groupIndex }));
 
-    if (!terms.length) return "";
-
-    const isOpen = query || groupIndex === activeGroup;
+    const isOpen = groupIndex === activeGroup;
     return `
       <details class="panel-section vocabulary-section" data-group-index="${groupIndex}" ${isOpen ? "open" : ""}>
         <summary>
@@ -209,7 +220,7 @@ function renderLibrary() {
     `;
   }).join("");
 
-  sectionList.innerHTML = sections || `<p class="empty-state">No matching vocabulary.</p>`;
+  sectionList.innerHTML = sections;
 
   if (window.lucide) {
     window.lucide.createIcons();
@@ -310,7 +321,10 @@ document.querySelector(".segmented").addEventListener("click", event => {
   playDemo();
 });
 
-search.addEventListener("input", renderLibrary);
+panelSwitchButtons.forEach(button => {
+  button.addEventListener("click", () => switchPanel(button.dataset.panel));
+});
+
 playButton.addEventListener("click", playDemo);
 loopButton.addEventListener("click", () => {
   loopEnabled = !loopEnabled;

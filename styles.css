@@ -61,8 +61,7 @@ button {
   overflow: visible;
 }
 
-.control-header,
-.search-row {
+.control-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -250,9 +249,52 @@ p {
 }
 
 .sheet-body {
-  display: block;
+  display: flex;
   height: 100%;
   min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-height: 42px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(251, 253, 255, .84);
+}
+
+.panel-switch-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font-size: .78rem;
+  font-weight: 800;
+}
+
+.panel-switch-button:last-child {
+  border-right: 0;
+}
+
+.panel-switch-button.is-active {
+  background: #17202a;
+  color: white;
+}
+
+.panel-switch-button svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.2;
+}
+
+.panel-view {
+  min-height: 0;
+  flex: 1;
   overflow: auto;
 }
 
@@ -372,39 +414,6 @@ input[type="range"] {
   padding: 14px 14px 16px;
 }
 
-.search-row {
-  position: sticky;
-  top: 0;
-  z-index: 3;
-  padding: 0;
-  background: rgba(251, 253, 255, .96);
-}
-
-.search-box {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: 38px;
-  gap: 8px;
-  padding: 0 12px;
-  border: 0;
-  border-bottom: 1px solid var(--line);
-  border-radius: 0;
-  background: rgba(251, 253, 255, .72);
-  color: var(--muted);
-  box-shadow: none;
-}
-
-.search-box input {
-  width: 100%;
-  min-width: 0;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: var(--ink);
-  font-size: .86rem;
-}
-
 .section-list {
   padding-bottom: 28px;
 }
@@ -456,17 +465,8 @@ input[type="range"] {
   display: none;
 }
 
-.empty-state {
-  margin: 0;
-  padding: 18px 14px;
-  border-bottom: 1px solid var(--line);
-  color: var(--muted);
-  font-size: .82rem;
-}
-
 .icon-button svg,
 .play-button svg,
-.search-box svg,
 .panel-section summary svg {
   width: 16px;
   height: 16px;
