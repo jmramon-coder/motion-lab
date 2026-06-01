@@ -163,16 +163,12 @@ const demoObject = document.querySelector("#demo-object");
 const demoLabel = document.querySelector("#demo-label");
 const demoStage = document.querySelector("#demo-stage");
 const scrollWorld = document.querySelector("#scroll-world");
-const tapTarget = document.querySelector("#tap-target");
 const conceptTitle = document.querySelector("#concept-title");
 const conceptDefinition = document.querySelector("#concept-definition");
 const activeCategory = document.querySelector("#active-category");
 const playButton = document.querySelector("#play");
 const loopButton = document.querySelector("#loop");
 const reducedMotion = document.querySelector("#reduced-motion");
-const sheetToggle = document.querySelector("#sheet-toggle");
-const sheetTitle = document.querySelector(".sheet-header strong");
-const sheetSummary = document.querySelector("#sheet-summary");
 const sheetTabs = document.querySelectorAll(".sheet-tab");
 const sheetViews = document.querySelectorAll(".sheet-view");
 
@@ -188,14 +184,7 @@ let activeTerm = flatTerms[0];
 let loopEnabled = false;
 let loopTimer = 0;
 
-function setSheetOpen(isOpen) {
-  document.body.classList.toggle("sheet-open", isOpen);
-  sheetToggle.setAttribute("aria-expanded", String(isOpen));
-}
-
 function switchPanel(panel) {
-  sheetTitle.textContent = panel === "controls" ? "Controls" : "Library";
-
   sheetTabs.forEach(tab => {
     const isActive = tab.dataset.panel === panel;
     tab.classList.toggle("is-active", isActive);
@@ -236,7 +225,6 @@ function setActiveTerm(term, shouldPlay = true) {
   activeCategory.textContent = term.group;
   conceptTitle.textContent = term.name;
   conceptDefinition.textContent = term.definition;
-  sheetSummary.textContent = term.name;
   demoLabel.textContent = labelFor(term);
   renderCategories();
   renderTerms();
@@ -257,7 +245,6 @@ function playDemo() {
   demoObject.className = "demo-object";
   demoStage.className = "demo-stage";
   scrollWorld.className = "scroll-world";
-  tapTarget.classList.remove("is-rippling");
 
   if (demo === "stagger") {
     demoLabel.innerHTML = labelFor(activeTerm).split("").map((letter, index) =>
@@ -276,7 +263,6 @@ function playDemo() {
         return;
       }
       if (demo === "ripple") {
-        tapTarget.classList.add("is-rippling");
         demoObject.classList.add("animate-press");
         scheduleLoop();
         return;
@@ -336,14 +322,9 @@ document.querySelector(".segmented").addEventListener("click", event => {
   playDemo();
 });
 
-sheetToggle.addEventListener("click", () => {
-  setSheetOpen(!document.body.classList.contains("sheet-open"));
-});
-
 sheetTabs.forEach(tab => {
   tab.addEventListener("click", () => {
     switchPanel(tab.dataset.panel);
-    setSheetOpen(true);
   });
 });
 
@@ -360,12 +341,6 @@ loopButton.addEventListener("click", () => {
   }
 });
 demoStage.addEventListener("click", playDemo);
-tapTarget.addEventListener("keydown", event => {
-  if (event.key === "Enter" || event.key === " ") {
-    event.preventDefault();
-    playDemo();
-  }
-});
 
 reducedMotion.addEventListener("change", () => {
   document.body.classList.toggle("motion-reduced", reducedMotion.checked);
