@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Motion Lab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="stage-panel" aria-labelledby="app-title">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Animation vocabulary lab</p>
+            <h1 id="app-title">Motion Lab</h1>
+          </div>
+          <button class="icon-button" id="randomize" type="button" aria-label="Try a random concept" title="Random concept">
+            <i data-lucide="shuffle"></i>
+          </button>
+        </header>
+
+        <div class="concept-card">
+          <div class="concept-copy">
+            <p class="category-label" id="active-category">Entrances & Exits</p>
+            <h2 id="concept-title">Fade in / Fade out</h2>
+            <p id="concept-definition">Element appears or disappears by changing opacity.</p>
+          </div>
+          <button class="play-button" id="play" type="button">
+            <i data-lucide="play"></i>
+            <span>Play</span>
+          </button>
+        </div>
+
+        <div class="demo-stage" id="demo-stage" aria-live="polite">
+          <div class="scroll-world" id="scroll-world">
+            <div class="parallax back"></div>
+            <div class="parallax mid"></div>
+            <div class="demo-object" id="demo-object">
+              <span id="demo-label">Fade</span>
+            </div>
+          </div>
+          <div class="tap-target" id="tap-target" role="button" tabindex="0" aria-label="Interactive demo target">
+            <span></span>
+          </div>
+        </div>
+
+        <section class="control-panel" aria-label="Animation controls">
+          <div class="control-header">
+            <h2>Controls</h2>
+            <label class="switch">
+              <input id="reduced-motion" type="checkbox">
+              <span>Reduced</span>
+            </label>
+          </div>
+
+          <div class="control-grid">
+            <label class="control">
+              <span>Duration <strong id="duration-value">720ms</strong></span>
+              <input id="duration" type="range" min="120" max="1800" step="20" value="720">
+            </label>
+            <label class="control">
+              <span>Delay <strong id="delay-value">80ms</strong></span>
+              <input id="delay" type="range" min="0" max="900" step="20" value="80">
+            </label>
+            <label class="control">
+              <span>Stagger <strong id="stagger-value">80ms</strong></span>
+              <input id="stagger" type="range" min="0" max="220" step="10" value="80">
+            </label>
+            <label class="control">
+              <span>Perspective <strong id="perspective-value">720px</strong></span>
+              <input id="perspective" type="range" min="260" max="1400" step="20" value="720">
+            </label>
+          </div>
+
+          <div class="segmented" role="group" aria-label="Easing">
+            <button class="segment is-active" data-ease="cubic-bezier(.2,.8,.2,1)" type="button">Ease-out</button>
+            <button class="segment" data-ease="cubic-bezier(.65,0,.35,1)" type="button">Ease-in-out</button>
+            <button class="segment" data-ease="linear" type="button">Linear</button>
+            <button class="segment" data-ease="cubic-bezier(.34,1.56,.64,1)" type="button">Springy</button>
+          </div>
+        </section>
+      </section>
+
+      <aside class="library-panel" aria-label="Animation vocabulary">
+        <div class="search-row">
+          <label class="search-box">
+            <i data-lucide="search"></i>
+            <input id="search" type="search" placeholder="Search vocabulary">
+          </label>
+        </div>
+        <nav class="category-tabs" id="category-tabs" aria-label="Vocabulary categories"></nav>
+        <div class="term-list" id="term-list"></div>
+      </aside>
+    </main>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
