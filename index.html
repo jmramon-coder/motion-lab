@@ -40,57 +40,56 @@
 
       <aside class="bottom-sheet" id="bottom-sheet" aria-label="Animation learning panel">
         <div class="sheet-body" id="sheet-body">
-          <div class="sheet-tabs" role="tablist" aria-label="Panel view">
-            <button class="sheet-tab is-active" id="library-tab" data-panel="library" type="button" role="tab" aria-selected="true" aria-controls="library-panel">Library</button>
-            <button class="sheet-tab" id="controls-tab" data-panel="controls" type="button" role="tab" aria-selected="false" aria-controls="controls-panel">Controls</button>
+          <div class="search-row">
+            <label class="search-box">
+              <i data-lucide="search"></i>
+              <input id="search" type="search" placeholder="Search vocabulary">
+            </label>
           </div>
 
-          <section class="sheet-view is-active" id="library-panel" role="tabpanel" aria-labelledby="library-tab">
-            <div class="search-row">
-              <label class="search-box">
-                <i data-lucide="search"></i>
-                <input id="search" type="search" placeholder="Search vocabulary">
-              </label>
-            </div>
-            <nav class="category-tabs" id="category-tabs" aria-label="Vocabulary categories"></nav>
-            <div class="term-list" id="term-list"></div>
-          </section>
-
-          <section class="sheet-view" id="controls-panel" role="tabpanel" aria-labelledby="controls-tab" hidden>
-            <div class="control-header">
+          <details class="panel-section control-section">
+            <summary>
+              <span>Controls</span>
+              <i data-lucide="chevron-down"></i>
+            </summary>
+            <div class="section-content">
+              <div class="control-header">
               <h2>Controls</h2>
               <label class="switch">
                 <input id="reduced-motion" type="checkbox">
                 <span>Reduced</span>
               </label>
-            </div>
+              </div>
 
-            <div class="control-grid">
-              <label class="control">
-                <span>Duration <strong id="duration-value">720ms</strong></span>
-                <input id="duration" type="range" min="120" max="1800" step="20" value="720">
-              </label>
-              <label class="control">
-                <span>Delay <strong id="delay-value">80ms</strong></span>
-                <input id="delay" type="range" min="0" max="900" step="20" value="80">
-              </label>
-              <label class="control">
-                <span>Stagger <strong id="stagger-value">80ms</strong></span>
-                <input id="stagger" type="range" min="0" max="220" step="10" value="80">
-              </label>
-              <label class="control">
-                <span>Perspective <strong id="perspective-value">720px</strong></span>
-                <input id="perspective" type="range" min="260" max="1400" step="20" value="720">
-              </label>
-            </div>
+              <div class="control-grid">
+                <label class="control">
+                  <span>Duration <strong id="duration-value">720ms</strong></span>
+                  <input id="duration" type="range" min="120" max="1800" step="20" value="720">
+                </label>
+                <label class="control">
+                  <span>Delay <strong id="delay-value">80ms</strong></span>
+                  <input id="delay" type="range" min="0" max="900" step="20" value="80">
+                </label>
+                <label class="control">
+                  <span>Stagger <strong id="stagger-value">80ms</strong></span>
+                  <input id="stagger" type="range" min="0" max="220" step="10" value="80">
+                </label>
+                <label class="control">
+                  <span>Perspective <strong id="perspective-value">720px</strong></span>
+                  <input id="perspective" type="range" min="260" max="1400" step="20" value="720">
+                </label>
+              </div>
 
-            <div class="segmented" role="group" aria-label="Easing">
-              <button class="segment is-active" data-ease="cubic-bezier(.2,.8,.2,1)" type="button">Ease-out</button>
-              <button class="segment" data-ease="cubic-bezier(.65,0,.35,1)" type="button">Ease-in-out</button>
-              <button class="segment" data-ease="linear" type="button">Linear</button>
-              <button class="segment" data-ease="cubic-bezier(.34,1.56,.64,1)" type="button">Springy</button>
+              <div class="segmented" role="group" aria-label="Easing">
+                <button class="segment is-active" data-ease="cubic-bezier(.2,.8,.2,1)" type="button">Ease-out</button>
+                <button class="segment" data-ease="cubic-bezier(.65,0,.35,1)" type="button">Ease-in-out</button>
+                <button class="segment" data-ease="linear" type="button">Linear</button>
+                <button class="segment" data-ease="cubic-bezier(.34,1.56,.64,1)" type="button">Springy</button>
+              </div>
             </div>
-          </section>
+          </details>
+
+          <div class="section-list" id="section-list" aria-label="Animation vocabulary"></div>
         </div>
       </aside>
     </main>

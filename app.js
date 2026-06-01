@@ -156,8 +156,7 @@ const flatTerms = groups.flatMap((group, groupIndex) =>
   group.terms.map(([name, definition, demo]) => ({ name, definition, demo, group: group.name, groupIndex }))
 );
 
-const categoryTabs = document.querySelector("#category-tabs");
-const termList = document.querySelector("#term-list");
+const sectionList = document.querySelector("#section-list");
 const search = document.querySelector("#search");
 const demoObject = document.querySelector("#demo-object");
 const demoLabel = document.querySelector("#demo-label");
@@ -169,8 +168,6 @@ const activeCategory = document.querySelector("#active-category");
 const playButton = document.querySelector("#play");
 const loopButton = document.querySelector("#loop");
 const reducedMotion = document.querySelector("#reduced-motion");
-const sheetTabs = document.querySelectorAll(".sheet-tab");
-const sheetViews = document.querySelectorAll(".sheet-view");
 
 const controls = {
   duration: document.querySelector("#duration"),
@@ -184,39 +181,39 @@ let activeTerm = flatTerms[0];
 let loopEnabled = false;
 let loopTimer = 0;
 
-function switchPanel(panel) {
-  sheetTabs.forEach(tab => {
-    const isActive = tab.dataset.panel === panel;
-    tab.classList.toggle("is-active", isActive);
-    tab.setAttribute("aria-selected", String(isActive));
-  });
-
-  sheetViews.forEach(view => {
-    const isActive = view.id === `${panel}-panel`;
-    view.classList.toggle("is-active", isActive);
-    view.hidden = !isActive;
-  });
-}
-
-function renderCategories() {
-  categoryTabs.innerHTML = groups.map((group, index) => (
-    `<button class="category-tab ${index === activeGroup ? "is-active" : ""}" data-index="${index}" type="button">${group.name}</button>`
-  )).join("");
-}
-
-function renderTerms() {
+function renderLibrary() {
   const query = search.value.trim().toLowerCase();
-  const terms = query ? flatTerms : flatTerms.filter(term => term.groupIndex === activeGroup);
+  const sections = groups.map((group, groupIndex) => {
+    const terms = group.terms
+      .map(([name, definition, demo]) => ({ name, definition, demo, group: group.name, groupIndex }))
+      .filter(term => !query || `${term.name} ${term.definition} ${term.group}`.toLowerCase().includes(query));
 
-  termList.innerHTML = terms.map(term => {
-    const hidden = query && !`${term.name} ${term.definition} ${term.group}`.toLowerCase().includes(query);
+    if (!terms.length) return "";
+
+    const isOpen = query || groupIndex === activeGroup;
     return `
-      <button class="term-button ${term === activeTerm ? "is-active" : ""} ${hidden ? "is-hidden" : ""}" data-name="${term.name}" type="button">
-        <strong>${term.name}</strong>
-        <span>${term.definition}</span>
-      </button>
+      <details class="panel-section vocabulary-section" data-group-index="${groupIndex}" ${isOpen ? "open" : ""}>
+        <summary>
+          <span>${group.name}</span>
+          <i data-lucide="chevron-down"></i>
+        </summary>
+        <div class="term-list">
+          ${terms.map(term => `
+            <button class="term-button ${term.name === activeTerm.name ? "is-active" : ""}" data-name="${term.name}" type="button">
+              <strong>${term.name}</strong>
+              <span>${term.definition}</span>
+            </button>
+          `).join("")}
+        </div>
+      </details>
     `;
   }).join("");
+
+  sectionList.innerHTML = sections || `<p class="empty-state">No matching vocabulary.</p>`;
+
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
 }
 
 function setActiveTerm(term, shouldPlay = true) {
@@ -226,8 +223,7 @@ function setActiveTerm(term, shouldPlay = true) {
   conceptTitle.textContent = term.name;
   conceptDefinition.textContent = term.definition;
   demoLabel.textContent = labelFor(term);
-  renderCategories();
-  renderTerms();
+  renderLibrary();
   if (shouldPlay) playDemo();
 }
 
@@ -291,15 +287,7 @@ function syncControls() {
   document.querySelector("#perspective-value").textContent = `${controls.perspective.value}px`;
 }
 
-categoryTabs.addEventListener("click", event => {
-  const button = event.target.closest(".category-tab");
-  if (!button) return;
-  activeGroup = Number(button.dataset.index);
-  search.value = "";
-  setActiveTerm(flatTerms.find(term => term.groupIndex === activeGroup));
-});
-
-termList.addEventListener("click", event => {
+sectionList.addEventListener("click", event => {
   const button = event.target.closest(".term-button");
   if (!button) return;
   const term = flatTerms.find(item => item.name === button.dataset.name);
@@ -322,13 +310,7 @@ document.querySelector(".segmented").addEventListener("click", event => {
   playDemo();
 });
 
-sheetTabs.forEach(tab => {
-  tab.addEventListener("click", () => {
-    switchPanel(tab.dataset.panel);
-  });
-});
-
-search.addEventListener("input", renderTerms);
+search.addEventListener("input", renderLibrary);
 playButton.addEventListener("click", playDemo);
 loopButton.addEventListener("click", () => {
   loopEnabled = !loopEnabled;
@@ -352,8 +334,7 @@ if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
   document.body.classList.add("motion-reduced");
 }
 
-renderCategories();
-renderTerms();
+renderLibrary();
 syncControls();
 setActiveTerm(activeTerm, false);
 playDemo();
