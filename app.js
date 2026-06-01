@@ -170,6 +170,10 @@ const activeCategory = document.querySelector("#active-category");
 const playButton = document.querySelector("#play");
 const randomizeButton = document.querySelector("#randomize");
 const reducedMotion = document.querySelector("#reduced-motion");
+const sheetToggle = document.querySelector("#sheet-toggle");
+const sheetTitle = document.querySelector(".sheet-header strong");
+const sheetTabs = document.querySelectorAll(".sheet-tab");
+const sheetViews = document.querySelectorAll(".sheet-view");
 
 const controls = {
   duration: document.querySelector("#duration"),
@@ -180,6 +184,27 @@ const controls = {
 
 let activeGroup = 0;
 let activeTerm = flatTerms[0];
+
+function setSheetOpen(isOpen) {
+  document.body.classList.toggle("sheet-open", isOpen);
+  sheetToggle.setAttribute("aria-expanded", String(isOpen));
+}
+
+function switchPanel(panel) {
+  sheetTitle.textContent = panel === "controls" ? "Controls" : "Library";
+
+  sheetTabs.forEach(tab => {
+    const isActive = tab.dataset.panel === panel;
+    tab.classList.toggle("is-active", isActive);
+    tab.setAttribute("aria-selected", String(isActive));
+  });
+
+  sheetViews.forEach(view => {
+    const isActive = view.id === `${panel}-panel`;
+    view.classList.toggle("is-active", isActive);
+    view.hidden = !isActive;
+  });
+}
 
 function renderCategories() {
   categoryTabs.innerHTML = groups.map((group, index) => (
@@ -294,6 +319,17 @@ document.querySelector(".segmented").addEventListener("click", event => {
   button.classList.add("is-active");
   document.documentElement.style.setProperty("--ease", button.dataset.ease);
   playDemo();
+});
+
+sheetToggle.addEventListener("click", () => {
+  setSheetOpen(!document.body.classList.contains("sheet-open"));
+});
+
+sheetTabs.forEach(tab => {
+  tab.addEventListener("click", () => {
+    switchPanel(tab.dataset.panel);
+    setSheetOpen(true);
+  });
 });
 
 search.addEventListener("input", renderTerms);
