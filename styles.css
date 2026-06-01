@@ -57,12 +57,10 @@ button {
   display: flex;
   min-height: 0;
   flex-direction: column;
-  gap: 8px;
-  padding: 8px 0 0;
-  overflow: hidden;
+  padding: 0;
+  overflow: visible;
 }
 
-.topbar,
 .control-header,
 .search-row {
   display: flex;
@@ -85,26 +83,13 @@ p {
   margin-top: 0;
 }
 
-.brand {
-  margin-bottom: 0;
-  font-size: .95rem;
-  line-height: 1;
-  font-weight: 800;
-  letter-spacing: 0;
-}
-
-.topbar {
-  min-height: 42px;
-  padding: 0 10px;
-}
-
 .icon-button,
 .play-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(174, 187, 199, .74);
-  border-radius: 12px;
+  border-radius: 10px;
   background: rgba(251, 253, 255, .92);
   color: var(--ink);
   box-shadow: var(--shadow-soft);
@@ -112,9 +97,9 @@ p {
 }
 
 .icon-button {
-  width: 38px;
-  height: 38px;
-  flex: 0 0 38px;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
 }
 
 .icon-button.is-active {
@@ -125,7 +110,8 @@ p {
 
 .top-actions {
   display: inline-flex;
-  gap: 8px;
+  flex: 0 0 auto;
+  gap: 6px;
 }
 
 .icon-button:active,
@@ -140,7 +126,7 @@ p {
   position: relative;
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
   border: 0;
   border-top: 1px solid rgba(174, 187, 199, .72);
   border-bottom: 1px solid rgba(174, 187, 199, .72);
@@ -154,14 +140,22 @@ p {
 .stage-caption {
   position: absolute;
   z-index: 2;
-  left: 12px;
-  top: 10px;
-  max-width: min(74vw, 380px);
-  padding: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 10px 0;
   border: 0;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
+}
+
+.caption-copy {
+  min-width: 0;
 }
 
 .stage-caption h2 {
@@ -187,6 +181,7 @@ p {
   inset: 0;
   display: grid;
   place-items: center;
+  overflow: visible;
 }
 
 .parallax {
@@ -213,7 +208,7 @@ p {
   position: relative;
   display: grid;
   place-items: center;
-  width: min(62vw, 250px);
+  width: min(68vw, 270px);
   aspect-ratio: 1;
   border: 0;
   border-radius: 28px;
@@ -231,7 +226,7 @@ p {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: contrast(1.12) saturate(1.12) drop-shadow(0 28px 34px rgba(32, 46, 61, .28));
+  filter: contrast(1.12) saturate(1.12) drop-shadow(0 32px 38px rgba(32, 46, 61, .3));
   pointer-events: none;
   user-select: none;
 }
@@ -280,7 +275,7 @@ p {
 }
 
 .panel-section {
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid rgba(216, 225, 232, .78);
   background: var(--surface);
 }
 
@@ -290,8 +285,8 @@ p {
   justify-content: space-between;
   gap: 12px;
   width: 100%;
-  min-height: 44px;
-  padding: 0 14px;
+  min-height: 40px;
+  padding: 0 12px;
   color: var(--ink);
   cursor: pointer;
   list-style: none;
@@ -302,8 +297,8 @@ p {
 }
 
 .panel-section summary svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   color: var(--muted);
   transition: transform 160ms ease;
 }
@@ -313,7 +308,7 @@ p {
 }
 
 .section-content {
-  border-top: 1px solid var(--line);
+  border-top: 1px solid rgba(216, 225, 232, .72);
 }
 
 .control-header {
@@ -389,13 +384,13 @@ input[type="range"] {
   display: flex;
   align-items: center;
   width: 100%;
-  height: 42px;
-  gap: 9px;
-  padding: 0 11px;
+  height: 38px;
+  gap: 8px;
+  padding: 0 12px;
   border: 0;
   border-bottom: 1px solid var(--line);
   border-radius: 0;
-  background: var(--surface);
+  background: rgba(251, 253, 255, .72);
   color: var(--muted);
   box-shadow: none;
 }
@@ -407,6 +402,7 @@ input[type="range"] {
   outline: 0;
   background: transparent;
   color: var(--ink);
+  font-size: .86rem;
 }
 
 .section-list {
@@ -423,8 +419,8 @@ input[type="range"] {
   display: grid;
   gap: 5px;
   width: 100%;
-  min-height: 68px;
-  padding: 12px 14px;
+  min-height: 64px;
+  padding: 11px 12px;
   border: 0;
   border-top: 1px solid var(--line);
   border-radius: 0;
@@ -472,8 +468,8 @@ input[type="range"] {
 .play-button svg,
 .search-box svg,
 .panel-section summary svg {
-  width: 17px;
-  height: 17px;
+  width: 16px;
+  height: 16px;
   stroke-width: 2.2;
 }
 
@@ -605,12 +601,6 @@ body.motion-reduced .parallax {
 
   .control-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 420px) {
-  .topbar {
-    align-items: center;
   }
 }
 
