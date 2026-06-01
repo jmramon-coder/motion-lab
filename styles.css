@@ -141,11 +141,7 @@ p {
   overflow: hidden;
   border: 1px solid rgba(174, 187, 199, .8);
   border-radius: 22px;
-  background:
-    linear-gradient(90deg, rgba(174, 187, 199, .24) 1px, transparent 1px),
-    linear-gradient(rgba(174, 187, 199, .24) 1px, transparent 1px),
-    linear-gradient(180deg, #ffffff, #f4f8fb);
-  background-size: 28px 28px;
+  background: #fbfdff;
   box-shadow: var(--shadow);
   perspective: var(--perspective);
   touch-action: manipulation;
@@ -193,6 +189,7 @@ p {
   position: absolute;
   height: 1px;
   background: rgba(37, 111, 143, .38);
+  opacity: 0;
   transition: transform var(--duration) var(--ease);
 }
 
@@ -212,40 +209,46 @@ p {
   position: relative;
   display: grid;
   place-items: center;
-  width: min(48vw, 178px);
+  width: min(66vw, 280px);
   aspect-ratio: 1;
-  border: 1px solid rgba(18, 28, 38, .14);
-  border-radius: 18px;
-  background: linear-gradient(145deg, #243241, #0f1720);
-  color: white;
+  border: 0;
+  border-radius: 28px;
+  background: transparent;
+  color: var(--ink);
   font-size: .95rem;
   font-weight: 800;
   text-align: center;
   transform-origin: center;
-  box-shadow: 0 24px 44px rgba(23, 32, 42, .22);
   will-change: transform, opacity, clip-path, filter;
 }
 
-.demo-object::before {
-  content: "";
-  position: absolute;
-  width: 54%;
-  height: 54%;
-  border: 1px solid rgba(255, 255, 255, .72);
-  border-radius: 10px;
-  transform: rotate(22deg);
+.lab-mark {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 28px 34px rgba(32, 46, 61, .2));
   pointer-events: none;
+  user-select: none;
 }
 
-.demo-object::after {
-  content: "";
+#demo-label {
   position: absolute;
-  right: 13px;
-  top: 13px;
-  width: 7px;
-  height: 7px;
-  border: 1px solid rgba(255, 255, 255, .82);
-  border-radius: 4px;
+  right: 50%;
+  bottom: -4px;
+  max-width: min(72vw, 210px);
+  transform: translateX(50%);
+  overflow: hidden;
+  border: 1px solid rgba(216, 225, 232, .92);
+  border-radius: 999px;
+  background: rgba(251, 253, 255, .9);
+  box-shadow: var(--shadow-soft);
+  color: var(--ink);
+  font-size: .74rem;
+  line-height: 1;
+  padding: 8px 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   pointer-events: none;
 }
 
@@ -565,7 +568,7 @@ input[type="range"] {
 .animate-pop { animation: pop var(--duration) cubic-bezier(.34,1.56,.64,1) var(--delay) both; }
 .animate-reveal { animation: reveal var(--duration) var(--ease) var(--delay) both; }
 .animate-keyframes { animation: keyframesDemo var(--duration) var(--ease) var(--delay) both; }
-.animate-stagger span { animation: textStep var(--duration) var(--ease) both; }
+.animate-stagger #demo-label span { animation: textStep var(--duration) var(--ease) both; }
 .animate-translate { animation: translateDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-rotate { animation: rotateDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-skew { animation: skewDemo var(--duration) var(--ease) var(--delay) both; }
@@ -577,8 +580,8 @@ input[type="range"] {
 .animate-collapse { animation: collapseDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-direction { animation: directionDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-scroll { animation: scrollReveal var(--duration) var(--ease) var(--delay) both; }
-.animate-parallax .back { transform: translateY(-34px); }
-.animate-parallax .mid { transform: translateY(42px); }
+.animate-parallax .back { opacity: 1; transform: translateY(-34px); }
+.animate-parallax .mid { opacity: 1; transform: translateY(42px); }
 .animate-press { animation: pressDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-drag { animation: dragDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-swipe { animation: swipeDemo var(--duration) var(--ease) var(--delay) both; }
@@ -593,8 +596,8 @@ input[type="range"] {
 .animate-line { animation: lineDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-shimmer { overflow: hidden; }
 .animate-shimmer::before { animation: shimmer calc(var(--duration) * 1.6) linear var(--delay) infinite; background: linear-gradient(90deg, transparent, rgba(255,255,255,.62), transparent); height: 100%; transform: translateX(-130%); width: 55%; }
-.animate-ticker { animation: ticker var(--duration) steps(6, end) var(--delay) both; font-variant-numeric: tabular-nums; }
-.animate-typewriter { width: 9ch; overflow: hidden; white-space: nowrap; animation: typewriter var(--duration) steps(9, end) var(--delay) both; }
+.animate-ticker #demo-label { animation: ticker var(--duration) steps(6, end) var(--delay) both; font-variant-numeric: tabular-nums; }
+.animate-typewriter #demo-label { width: 9ch; animation: typewriter var(--duration) steps(9, end) var(--delay) both; }
 .animate-performance { animation: performanceDemo var(--duration) steps(7, end) var(--delay) both; }
 .animate-anticipation { animation: anticipation var(--duration) var(--ease) var(--delay) both; }
 .animate-follow { animation: followThrough calc(var(--duration) * 1.15) var(--ease) var(--delay) both; }
