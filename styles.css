@@ -17,6 +17,10 @@
   --ease: cubic-bezier(.2,.8,.2,1);
   --perspective: 720px;
   --subject-size: 68vw;
+  --safe-top: max(env(safe-area-inset-top, 0px), 44px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --app-height: 100svh;
+  --stage-height: 48svh;
 }
 
 * {
@@ -28,12 +32,13 @@
 }
 
 html {
-  min-height: 100%;
+  height: 100%;
   background: var(--bg);
 }
 
 body {
-  min-height: 100vh;
+  height: 100%;
+  min-height: 100%;
   margin: 0;
   overflow: hidden;
   background:
@@ -54,8 +59,12 @@ button {
 
 .app-shell {
   display: grid;
-  grid-template-rows: 50dvh 50dvh;
-  min-height: 100dvh;
+  height: var(--app-height);
+  min-height: 0;
+  grid-template-rows: minmax(0, var(--stage-height)) minmax(0, 1fr);
+  padding-top: var(--safe-top);
+  background:
+    linear-gradient(180deg, #f9fbfd 0%, var(--bg) 56%, #e8eef3 100%);
 }
 
 .stage-panel {
@@ -378,7 +387,7 @@ p {
   right: auto;
   bottom: auto;
   left: auto;
-  height: 50dvh;
+  height: auto;
   min-height: 0;
   overflow: hidden;
   border: 0;
@@ -388,6 +397,7 @@ p {
   box-shadow: 0 -10px 30px rgba(32, 46, 61, .08);
   transform: none;
   transition: none;
+  padding-bottom: var(--safe-bottom);
 }
 
 .sheet-body {
@@ -753,14 +763,23 @@ body.motion-reduced .parallax {
 }
 
 @media (min-width: 760px) {
+  :root {
+    --safe-top: 0px;
+    --safe-bottom: 0px;
+    --app-height: 100dvh;
+    --stage-height: auto;
+  }
+
   body {
     overflow: hidden;
   }
 
   .app-shell {
     display: grid;
+    height: 100dvh;
     grid-template-columns: minmax(0, 1fr) 390px;
     grid-template-rows: 100dvh;
+    padding-top: 0;
   }
 
   .stage-panel {
