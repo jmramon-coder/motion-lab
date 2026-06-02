@@ -156,26 +156,48 @@ const flatTerms = groups.flatMap((group, groupIndex) =>
   group.terms.map(([name, definition, demo]) => ({ name, definition, demo, group: group.name, groupIndex }))
 );
 
-const animationExamples = [
-  ["Fade", "Opacity change for a quiet enter or exit.", "Fade in / Fade out", "blend"],
-  ["Slide", "Move in from an edge while preserving direction.", "Slide in", "move-right"],
-  ["Scale in", "Grow from small to full size with a soft fade.", "Scale in", "scan"],
-  ["Pop", "Overshoot slightly, then settle into place.", "Pop in", "badge-plus"],
-  ["Reveal", "Uncover content with a mask or clipped edge.", "Reveal", "panel-top-open"],
-  ["Stagger", "Cascade related items one after another.", "Stagger", "list-tree"],
-  ["3D flip", "Rotate through depth with perspective.", "3D tilt / Flip", "box"],
-  ["Layout shift", "Animate size or position changes instead of snapping.", "Layout animation", "layout-template"],
-  ["Scroll reveal", "Bring elements in as they enter the viewport.", "Scroll reveal", "mouse"],
-  ["Drag", "Move with a grabbed, interruptible feeling.", "Drag", "hand"],
-  ["Ripple", "Expand feedback from the tap point.", "Ripple", "circle-dot"],
-  ["Spring", "Use overshoot and settle for physical motion.", "Spring", "activity"],
-  ["Marquee", "Loop content continuously at linear speed.", "Marquee", "refresh-cw"],
-  ["Ticker", "Roll digits with fixed-width number spacing.", "Number ticker", "badge-123"],
-  ["Squash & stretch", "Deform briefly to imply weight and speed.", "Squash & stretch", "stretch-horizontal"]
-].map(([name, definition, termName, icon]) => ({ name, definition, termName, icon }));
+const demoIcons = {
+  anticipation: "corner-up-right",
+  blur: "focus",
+  collapse: "panel-top-close",
+  crossfade: "blend",
+  direction: "move-horizontal",
+  drag: "hand",
+  fade: "blend",
+  flip: "box",
+  follow: "git-branch",
+  keyframes: "diamond",
+  layout: "layout-template",
+  line: "pen-line",
+  marquee: "refresh-cw",
+  morph: "shapes",
+  orbit: "orbit",
+  origin: "move-3d",
+  parallax: "layers",
+  performance: "gauge",
+  pop: "badge-plus",
+  press: "mouse-pointer-click",
+  pulse: "activity",
+  reveal: "panel-top-open",
+  ripple: "circle-dot",
+  rotate: "rotate-cw",
+  rubber: "waves",
+  scale: "scan",
+  scroll: "mouse",
+  shake: "vibrate",
+  shimmer: "sparkles",
+  skew: "italic",
+  slide: "move-right",
+  spring: "activity",
+  squash: "stretch-horizontal",
+  stagger: "list-tree",
+  swipe: "send",
+  ticker: "badge-123",
+  translate: "move",
+  typewriter: "text-cursor"
+};
 
 const sectionList = document.querySelector("#section-list");
-const exampleList = document.querySelector("#example-list");
 const demoObject = document.querySelector("#demo-object");
 const demoLabel = document.querySelector("#demo-label");
 const demoStage = document.querySelector("#demo-stage");
@@ -191,7 +213,6 @@ const subjectGallery = document.querySelector("#subject-gallery");
 const subjectSize = document.querySelector("#subject-size");
 const subjectSizeControl = document.querySelector(".subject-size-control");
 const subjectSizeSlider = document.querySelector(".size-slider");
-const libraryModeButtons = document.querySelectorAll(".library-mode-button");
 const reducedMotion = document.querySelector("#reduced-motion");
 const panelSwitchButtons = document.querySelectorAll(".panel-switch-button");
 const panelViews = document.querySelectorAll(".panel-view");
@@ -235,7 +256,7 @@ function renderLibrary() {
 
     const isOpen = groupIndex === activeGroup;
     return `
-      <details class="panel-section vocabulary-section" data-group-index="${groupIndex}" ${isOpen ? "open" : ""}>
+      <details class="panel-section vocabulary-section ${isOpen ? "is-active-section" : ""}" data-group-index="${groupIndex}" ${isOpen ? "open" : ""}>
         <summary>
           <span>${group.name}</span>
           <i data-lucide="chevron-down"></i>
@@ -243,8 +264,11 @@ function renderLibrary() {
         <div class="term-list">
           ${terms.map(term => `
             <button class="term-button ${term.name === activeTerm.name ? "is-active" : ""}" data-name="${term.name}" type="button">
-              <strong>${term.name}</strong>
-              <span>${term.definition}</span>
+              <i data-lucide="${demoIcons[term.demo] || "sparkles"}"></i>
+              <span class="term-copy">
+                <strong>${term.name}</strong>
+                <span>${term.definition}</span>
+              </span>
             </button>
           `).join("")}
         </div>
@@ -253,23 +277,10 @@ function renderLibrary() {
   }).join("");
 
   sectionList.innerHTML = sections;
-  renderExamples();
 
   if (window.lucide) {
     window.lucide.createIcons();
   }
-}
-
-function renderExamples() {
-  exampleList.innerHTML = animationExamples.map(example => `
-    <button class="example-button ${example.termName === activeTerm.name ? "is-active" : ""}" data-term="${example.termName}" type="button">
-      <i data-lucide="${example.icon}"></i>
-      <span>
-        <strong>${example.name}</strong>
-        <span>${example.definition}</span>
-      </span>
-    </button>
-  `).join("");
 }
 
 function setActiveTerm(term, shouldPlay = true) {
@@ -368,13 +379,6 @@ sectionList.addEventListener("click", event => {
   if (term) setActiveTerm(term);
 });
 
-exampleList.addEventListener("click", event => {
-  const button = event.target.closest(".example-button");
-  if (!button) return;
-  const term = flatTerms.find(item => item.name === button.dataset.term);
-  if (term) setActiveTerm(term);
-});
-
 Object.values(controls).forEach(control => {
   control.addEventListener("input", () => {
     syncControls();
@@ -393,19 +397,6 @@ document.querySelector(".segmented").addEventListener("click", event => {
 
 panelSwitchButtons.forEach(button => {
   button.addEventListener("click", () => switchPanel(button.dataset.panel));
-});
-
-libraryModeButtons.forEach(button => {
-  button.addEventListener("click", () => {
-    const isExamples = button.dataset.libraryMode === "examples";
-    libraryModeButtons.forEach(modeButton => {
-      const isActive = modeButton === button;
-      modeButton.classList.toggle("is-active", isActive);
-      modeButton.setAttribute("aria-selected", String(isActive));
-    });
-    sectionList.hidden = isExamples;
-    exampleList.hidden = !isExamples;
-  });
 });
 
 playButton.addEventListener("click", playDemo);
