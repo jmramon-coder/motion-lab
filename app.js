@@ -189,10 +189,8 @@ const loopButton = document.querySelector("#loop");
 const subjectToggle = document.querySelector("#subject-toggle");
 const subjectGallery = document.querySelector("#subject-gallery");
 const subjectSize = document.querySelector("#subject-size");
-const subjectSizeValue = document.querySelector("#subject-size-value");
 const subjectSizeControl = document.querySelector(".subject-size-control");
-const subjectSizeUp = document.querySelector("#subject-size-up");
-const subjectSizeDown = document.querySelector("#subject-size-down");
+const subjectSizeSlider = document.querySelector(".size-slider");
 const libraryModeButtons = document.querySelectorAll(".library-mode-button");
 const reducedMotion = document.querySelector("#reduced-motion");
 const panelSwitchButtons = document.querySelectorAll(".panel-switch-button");
@@ -346,7 +344,9 @@ function syncControls() {
 
 function syncSubjectSize() {
   document.documentElement.style.setProperty("--subject-size", `${subjectSize.value}vw`);
-  subjectSizeValue.textContent = subjectSize.value;
+  const range = Number(subjectSize.max) - Number(subjectSize.min);
+  const progress = ((Number(subjectSize.value) - Number(subjectSize.min)) / range) * 100;
+  document.documentElement.style.setProperty("--subject-size-progress", `${progress}%`);
 }
 
 function setSubject(subject) {
@@ -436,15 +436,26 @@ subjectSize.addEventListener("input", () => {
   playDemo();
 });
 
-function stepSubjectSize(direction) {
-  const nextValue = Math.min(Number(subjectSize.max), Math.max(Number(subjectSize.min), Number(subjectSize.value) + direction));
-  subjectSize.value = String(nextValue);
+function updateSubjectSizeFromPointer(event) {
+  const rect = subjectSizeSlider.getBoundingClientRect();
+  const progress = Math.min(1, Math.max(0, (rect.bottom - event.clientY) / rect.height));
+  const min = Number(subjectSize.min);
+  const max = Number(subjectSize.max);
+  subjectSize.value = String(Math.round(min + progress * (max - min)));
   syncSubjectSize();
   playDemo();
 }
 
-subjectSizeUp.addEventListener("click", () => stepSubjectSize(4));
-subjectSizeDown.addEventListener("click", () => stepSubjectSize(-4));
+subjectSizeSlider.addEventListener("pointerdown", event => {
+  event.preventDefault();
+  subjectSizeSlider.setPointerCapture(event.pointerId);
+  updateSubjectSizeFromPointer(event);
+});
+
+subjectSizeSlider.addEventListener("pointermove", event => {
+  if (!subjectSizeSlider.hasPointerCapture(event.pointerId)) return;
+  updateSubjectSizeFromPointer(event);
+});
 
 ["click", "pointerdown", "touchstart"].forEach(eventName => {
   subjectSizeControl.addEventListener(eventName, event => event.stopPropagation());

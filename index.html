@@ -45,17 +45,14 @@
             </button>
           </div>
           <div class="subject-size-control" aria-label="Subject size" role="group">
-            <button class="size-step" id="subject-size-up" type="button" aria-label="Increase subject size">
-              <i data-lucide="plus"></i>
-            </button>
             <label class="size-slider">
               <span class="sr-only">Subject size</span>
-              <input id="subject-size" type="range" min="34" max="88" step="1" value="68">
+              <input id="subject-size" type="range" min="30" max="90" step="1" value="68">
+              <span class="size-rail" aria-hidden="true">
+                <span class="size-fill"></span>
+                <span class="size-thumb"></span>
+              </span>
             </label>
-            <output class="size-value" id="subject-size-value" for="subject-size">68</output>
-            <button class="size-step" id="subject-size-down" type="button" aria-label="Decrease subject size">
-              <i data-lucide="minus"></i>
-            </button>
           </div>
           <div class="scroll-world" id="scroll-world">
             <div class="parallax back"></div>
