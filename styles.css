@@ -816,7 +816,7 @@ body.motion-reduced .parallax {
 
   .stage-panel {
     min-height: 100dvh;
-    padding: 18px;
+    padding: 0;
   }
 
   .demo-stage {
