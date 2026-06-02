@@ -207,6 +207,7 @@ let activeGroup = 0;
 let activeTerm = flatTerms[0];
 let loopEnabled = false;
 let loopTimer = 0;
+let isSubjectSizing = false;
 const subjectAssets = {
   logo: "assets/lab-mark.png",
   character: "assets/subject-character.png",
@@ -433,7 +434,6 @@ subjectGallery.addEventListener("click", event => {
 
 subjectSize.addEventListener("input", () => {
   syncSubjectSize();
-  playDemo();
 });
 
 function updateSubjectSizeFromPointer(event) {
@@ -443,18 +443,26 @@ function updateSubjectSizeFromPointer(event) {
   const max = Number(subjectSize.max);
   subjectSize.value = String(Math.round(min + progress * (max - min)));
   syncSubjectSize();
-  playDemo();
 }
 
 subjectSizeSlider.addEventListener("pointerdown", event => {
   event.preventDefault();
-  subjectSizeSlider.setPointerCapture(event.pointerId);
+  isSubjectSizing = true;
+  if (subjectSizeSlider.setPointerCapture) {
+    subjectSizeSlider.setPointerCapture(event.pointerId);
+  }
   updateSubjectSizeFromPointer(event);
 });
 
 subjectSizeSlider.addEventListener("pointermove", event => {
-  if (!subjectSizeSlider.hasPointerCapture(event.pointerId)) return;
+  if (!isSubjectSizing) return;
   updateSubjectSizeFromPointer(event);
+});
+
+["pointerup", "pointercancel", "lostpointercapture"].forEach(eventName => {
+  subjectSizeSlider.addEventListener(eventName, () => {
+    isSubjectSizing = false;
+  });
 });
 
 ["click", "pointerdown", "touchstart"].forEach(eventName => {
