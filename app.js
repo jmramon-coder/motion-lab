@@ -25,7 +25,8 @@ const groups = [
       ["Rotate", "Spin an element around a point.", "rotate"],
       ["Skew", "Slant an element along the X or Y axis, shearing it out of its rectangular shape.", "skew"],
       ["3D tilt / Flip", "Rotate in 3D space with rotateX or rotateY to add depth.", "flip"],
-      ["Origin-aware animation", "An element animates out of its trigger instead of from its own center.", "origin"]
+      ["Origin-aware animation", "An element animates out of its trigger instead of from its own center.", "origin"],
+      ["Motion trail", "Ghosted copies follow the subject to emphasize speed and direction.", "trail"]
     ]
   },
   {
@@ -93,14 +94,6 @@ const groups = [
     ]
   },
   {
-    name: "Canvas-style Motion",
-    terms: [
-      ["Particle burst", "Small particles emit outward from the subject, useful for celebration or impact.", "particles"],
-      ["Motion trail", "Ghosted copies follow the subject to emphasize speed and direction.", "trail"],
-      ["Wave field", "A procedural wave ripples behind the subject, useful for p5 or shader-style motion.", "wave"]
-    ]
-  },
-  {
     name: "Motion Principles",
     terms: [
       ["Anticipation", "A small wind-up in the opposite direction before a move.", "anticipation"],
@@ -135,7 +128,6 @@ const demoIcons = {
   performance: "gauge",
   pop: "badge-plus",
   press: "mouse-pointer-click",
-  particles: "sparkles",
   pulse: "activity",
   reveal: "panel-top-open",
   ripple: "circle-dot",
@@ -155,8 +147,7 @@ const demoIcons = {
   ticker: "badge-123",
   trail: "wind",
   translate: "move",
-  typewriter: "text-cursor",
-  wave: "waves"
+  typewriter: "text-cursor"
 };
 
 const sectionList = document.querySelector("#section-list");
@@ -293,12 +284,6 @@ function playDemo() {
         demoObject.classList.add("animate-press");
         scheduleLoop();
         return;
-      }
-      if (demo === "particles") {
-        demoStage.classList.add("animate-particles");
-      }
-      if (demo === "wave") {
-        demoStage.classList.add("animate-wave");
       }
       demoObject.classList.add(`animate-${demo}`);
       scheduleLoop();
