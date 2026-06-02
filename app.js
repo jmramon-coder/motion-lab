@@ -6,21 +6,15 @@ const groups = [
       ["Slide in", "Element enters by sliding in from off-screen left, right, top, or bottom.", "slide"],
       ["Scale in", "Element grows from smaller to full size as it appears, often paired with a fade.", "scale"],
       ["Pop in", "Element appears with a slight overshoot, like it bounces into place.", "pop"],
-      ["Reveal", "Content is uncovered gradually, often by animating a clip-path or mask.", "reveal"],
-      ["Enter / Exit", "The animation an element plays when it is added to or removed from the screen.", "slide"]
+      ["Reveal", "Content is uncovered gradually, often by animating a clip-path or mask.", "reveal"]
     ]
   },
   {
     name: "Sequencing & Timing",
     terms: [
-      ["Keyframes", "Defined points in an animation such as 0%, 50%, and 100%; the browser fills the gaps.", "keyframes"],
-      ["Interpolation / Tween", "Generating all the in-between frames between a start and end value, so motion is continuous.", "translate"],
+      ["Keyframe path", "Move through multiple defined poses instead of a single start and end state.", "keyframes"],
       ["Stagger", "Animate several items one after another with a small delay between each, creating a cascade.", "stagger"],
-      ["Orchestration", "Deliberately timing multiple animations so they feel like one coordinated motion.", "stagger"],
-      ["Delay", "Time before an animation starts.", "fade"],
-      ["Duration", "How long an animation takes.", "translate"],
-      ["Fill mode", "Whether an element keeps its first or last frame's styles before or after the animation.", "pop"],
-      ["Stepped animation", "An animation divided into discrete steps, like a countdown timer.", "performance"]
+      ["Stepped animation", "Move in discrete steps instead of continuous motion.", "steps"]
     ]
   },
   {
@@ -31,8 +25,6 @@ const groups = [
       ["Rotate", "Spin an element around a point.", "rotate"],
       ["Skew", "Slant an element along the X or Y axis, shearing it out of its rectangular shape.", "skew"],
       ["3D tilt / Flip", "Rotate in 3D space with rotateX or rotateY to add depth.", "flip"],
-      ["Perspective", "How strong the 3D effect looks; a lower value exaggerates depth.", "flip"],
-      ["Transform origin", "The anchor point a scale or rotation grows or spins from.", "origin"],
       ["Origin-aware animation", "An element animates out of its trigger instead of from its own center.", "origin"]
     ]
   },
@@ -40,7 +32,6 @@ const groups = [
     name: "Transitions Between States",
     terms: [
       ["Crossfade", "One element fades out as another fades in, in the same spot.", "crossfade"],
-      ["Continuity transition", "A change that keeps the user oriented by visually connecting before and after.", "layout"],
       ["Morph", "One shape smoothly turns into another shape.", "morph"],
       ["Shared element transition", "An element travels and transforms from one position into another.", "layout"],
       ["Layout animation", "When an element's size or position changes, it animates to the new spot instead of snapping.", "layout"],
@@ -52,7 +43,6 @@ const groups = [
     name: "Scroll",
     terms: [
       ["Scroll reveal", "Elements fade or slide into place as they enter the viewport.", "scroll"],
-      ["Scroll-driven animation", "An animation whose progress is tied directly to scroll position.", "scroll"],
       ["Parallax", "Background and foreground move at different speeds while scrolling, creating depth.", "parallax"],
       ["Page transition", "An animation that plays when navigating from one page or route to another.", "direction"],
       ["View transition", "The browser morphs between two states or pages, connecting shared elements.", "morph"]
@@ -61,11 +51,9 @@ const groups = [
   {
     name: "Feedback & Interaction",
     terms: [
-      ["Hover effect", "Visual change when the cursor moves over an element.", "press"],
       ["Press / Tap feedback", "A subtle scale-down when an element is clicked, so it feels physical.", "press"],
       ["Hold to confirm", "A progress effect that fills up while the user holds a button.", "reveal"],
       ["Drag", "Moving an element by grabbing it, often with momentum when released.", "drag"],
-      ["Drag to reorder", "Dragging items in a list to rearrange them while others shift to make room.", "layout"],
       ["Swipe to dismiss", "Dragging an element off-screen to close it, like a drawer or toast.", "swipe"],
       ["Rubber-banding", "Resistance and snap-back when you drag past a boundary.", "rubber"],
       ["Shake / Wiggle", "A quick side-to-side jitter signaling an error or rejected input.", "shake"],
@@ -73,36 +61,18 @@ const groups = [
     ]
   },
   {
-    name: "Easing",
-    terms: [
-      ["Easing", "The rate at which an animation speeds up or slows down.", "translate"],
-      ["Ease-out", "Starts fast, ends slow; the default for most UI and anything responding to the user.", "slide"],
-      ["Ease-in", "Starts slow, ends fast; usually avoided because it can feel sluggish.", "slide"],
-      ["Ease-in-out", "Slow, fast, slow; good for elements already on screen moving from A to B.", "translate"],
-      ["Linear", "Constant speed; reserve for spinners or marquees.", "marquee"],
-      ["Cubic-bezier", "A custom easing curve you define for precise control.", "pop"],
-      ["Asymmetric easing", "A curve that accelerates and decelerates at different rates.", "spring"]
-    ]
-  },
-  {
     name: "Spring Animations",
     terms: [
       ["Spring", "Motion driven by physics such as tension, mass, and damping rather than a set duration.", "spring"],
-      ["Stiffness / Tension", "How strongly the spring pulls toward its target. Higher feels snappier.", "spring"],
-      ["Damping", "How quickly a spring settles. Lower damping means more bounce and oscillation.", "spring"],
-      ["Mass", "How heavy the animated element feels. More mass makes it slower and more sluggish.", "spring"],
       ["Bounce", "A spring that overshoots and settles, adding playfulness.", "pop"],
-      ["Perceptual duration", "How long a spring feels finished, even though it keeps micro-settling underneath.", "spring"],
-      ["Momentum", "Motion that carries velocity, especially after a drag or interruption.", "drag"],
-      ["Velocity", "How fast and in which direction an element is moving.", "drag"],
-      ["Interruptible animation", "An animation that can be smoothly redirected mid-flight instead of finishing first.", "spring"]
+      ["Momentum", "Motion that carries velocity after a drag or flick.", "drag"],
+      ["Interruptible animation", "Motion that can be redirected mid-flight instead of finishing first.", "spring"]
     ]
   },
   {
     name: "Looping & Ambient Motion",
     terms: [
       ["Marquee", "Text or content that scrolls continuously in a loop.", "marquee"],
-      ["Loop", "An animation that repeats, a set number of times or infinitely.", "pulse"],
       ["Alternate (yoyo)", "A loop that plays forward then reverses each iteration.", "pulse"],
       ["Orbit", "An element circling around another in a continuous path.", "orbit"],
       ["Pulse", "A gentle repeating scale or opacity change to draw attention.", "pulse"],
@@ -114,40 +84,28 @@ const groups = [
     name: "Polish & Effects",
     terms: [
       ["Blur", "A blur filter used to soften an element or mask tiny imperfections.", "blur"],
-      ["Clip-path", "Clipping an element to a shape, used for reveals, masks, and before/after sliders.", "reveal"],
-      ["Mask", "Hiding or revealing parts of an element using a shape or gradient.", "reveal"],
-      ["Before / after slider", "A draggable divider that wipes between two overlaid images to compare them.", "reveal"],
+      ["Clip reveal", "Clipping an element to reveal it through a moving edge or shape.", "reveal"],
       ["Line drawing", "An SVG path that draws itself in, like an invisible pen tracing it.", "line"],
       ["Text morph", "Text that animates character by character when it changes.", "typewriter"],
       ["Skeleton / Shimmer", "A placeholder with a moving sheen shown while content loads.", "shimmer"],
       ["Number ticker", "Digits rolling or counting up to a value.", "ticker"],
-      ["Tabular numbers", "Fixed-width digits so numbers do not shift around as they change.", "ticker"],
       ["Typewriter", "Text appearing one character at a time, as if being typed.", "typewriter"]
     ]
   },
   {
-    name: "Performance",
+    name: "Canvas-style Motion",
     terms: [
-      ["Frame rate (FPS)", "Frames drawn per second. 60fps is the baseline for smooth motion.", "performance"],
-      ["Jank", "Visible stutter when the browser drops frames because it cannot keep up.", "performance"],
-      ["Dropped frame", "A frame the browser missed its deadline to draw, causing a tiny hitch.", "performance"],
-      ["Compositing", "Letting the GPU move or fade an element on its own layer without redoing layout or paint.", "translate"],
-      ["will-change", "A CSS hint that an element is about to animate so the browser can promote it.", "fade"],
-      ["Layout thrashing", "Animating width, height, top, or left in ways that force layout every frame.", "layout"]
+      ["Particle burst", "Small particles emit outward from the subject, useful for celebration or impact.", "particles"],
+      ["Motion trail", "Ghosted copies follow the subject to emphasize speed and direction.", "trail"],
+      ["Wave field", "A procedural wave ripples behind the subject, useful for p5 or shader-style motion.", "wave"]
     ]
   },
   {
-    name: "Principles to Know",
+    name: "Motion Principles",
     terms: [
-      ["Purposeful animation", "Motion should serve a function: orient, give feedback, or show relationships.", "layout"],
       ["Anticipation", "A small wind-up in the opposite direction before a move.", "anticipation"],
       ["Follow-through", "Parts of an element keep moving and settle slightly after the main motion stops.", "follow"],
-      ["Squash & stretch", "Deforming an element as it moves to convey weight, speed, and flexibility.", "squash"],
-      ["Perceived performance", "The right animation makes an interface feel faster, even when it is not.", "shimmer"],
-      ["Frequency of use", "The more often a user sees an animation, the shorter and subtler it should be.", "fade"],
-      ["Spatial consistency", "Animating so an element keeps its identity and position across states.", "layout"],
-      ["Hardware acceleration", "Animating transform and opacity lets the GPU keep motion smooth.", "translate"],
-      ["Reduced motion", "Respecting prefers-reduced-motion by toning down or removing motion.", "fade"]
+      ["Squash & stretch", "Deforming an element as it moves to convey weight, speed, and flexibility.", "squash"]
     ]
   }
 ];
@@ -177,6 +135,7 @@ const demoIcons = {
   performance: "gauge",
   pop: "badge-plus",
   press: "mouse-pointer-click",
+  particles: "sparkles",
   pulse: "activity",
   reveal: "panel-top-open",
   ripple: "circle-dot",
@@ -191,10 +150,13 @@ const demoIcons = {
   spring: "activity",
   squash: "stretch-horizontal",
   stagger: "list-tree",
+  steps: "list-ordered",
   swipe: "send",
   ticker: "badge-123",
+  trail: "wind",
   translate: "move",
-  typewriter: "text-cursor"
+  typewriter: "text-cursor",
+  wave: "waves"
 };
 
 const sectionList = document.querySelector("#section-list");
@@ -331,6 +293,12 @@ function playDemo() {
         demoObject.classList.add("animate-press");
         scheduleLoop();
         return;
+      }
+      if (demo === "particles") {
+        demoStage.classList.add("animate-particles");
+      }
+      if (demo === "wave") {
+        demoStage.classList.add("animate-wave");
       }
       demoObject.classList.add(`animate-${demo}`);
       scheduleLoop();
