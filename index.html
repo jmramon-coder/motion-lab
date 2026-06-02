@@ -44,10 +44,19 @@
               <span>Ball</span>
             </button>
           </div>
-          <label class="subject-size-control" aria-label="Subject size">
-            <span class="sr-only">Subject size</span>
-            <input id="subject-size" type="range" min="38" max="86" step="1" value="68">
-          </label>
+          <div class="subject-size-control" aria-label="Subject size" role="group">
+            <button class="size-step" id="subject-size-up" type="button" aria-label="Increase subject size">
+              <i data-lucide="plus"></i>
+            </button>
+            <label class="size-slider">
+              <span class="sr-only">Subject size</span>
+              <input id="subject-size" type="range" min="34" max="88" step="1" value="68">
+            </label>
+            <output class="size-value" id="subject-size-value" for="subject-size">68</output>
+            <button class="size-step" id="subject-size-down" type="button" aria-label="Decrease subject size">
+              <i data-lucide="minus"></i>
+            </button>
+          </div>
           <div class="scroll-world" id="scroll-world">
             <div class="parallax back"></div>
             <div class="parallax mid"></div>
@@ -73,7 +82,18 @@
           </div>
 
           <section class="panel-view is-active" id="library-panel" role="tabpanel" aria-labelledby="library-tab">
+            <div class="library-mode-switch" role="tablist" aria-label="Library mode">
+              <button class="library-mode-button is-active" id="knowledge-tab" data-library-mode="knowledge" type="button" role="tab" aria-selected="true" aria-controls="section-list">
+                <i data-lucide="book-marked"></i>
+                <span>Knowledge</span>
+              </button>
+              <button class="library-mode-button" id="examples-tab" data-library-mode="examples" type="button" role="tab" aria-selected="false" aria-controls="example-list">
+                <i data-lucide="sparkles"></i>
+                <span>Examples</span>
+              </button>
+            </div>
             <div class="section-list" id="section-list" aria-label="Animation vocabulary"></div>
+            <div class="example-list" id="example-list" aria-label="Animation examples" hidden></div>
           </section>
 
           <section class="panel-view" id="controls-panel" role="tabpanel" aria-labelledby="controls-tab" hidden>

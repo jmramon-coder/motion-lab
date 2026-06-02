@@ -156,7 +156,26 @@ const flatTerms = groups.flatMap((group, groupIndex) =>
   group.terms.map(([name, definition, demo]) => ({ name, definition, demo, group: group.name, groupIndex }))
 );
 
+const animationExamples = [
+  ["Fade", "Opacity change for a quiet enter or exit.", "Fade in / Fade out", "blend"],
+  ["Slide", "Move in from an edge while preserving direction.", "Slide in", "move-right"],
+  ["Scale in", "Grow from small to full size with a soft fade.", "Scale in", "scan"],
+  ["Pop", "Overshoot slightly, then settle into place.", "Pop in", "badge-plus"],
+  ["Reveal", "Uncover content with a mask or clipped edge.", "Reveal", "panel-top-open"],
+  ["Stagger", "Cascade related items one after another.", "Stagger", "list-tree"],
+  ["3D flip", "Rotate through depth with perspective.", "3D tilt / Flip", "box"],
+  ["Layout shift", "Animate size or position changes instead of snapping.", "Layout animation", "layout-template"],
+  ["Scroll reveal", "Bring elements in as they enter the viewport.", "Scroll reveal", "mouse"],
+  ["Drag", "Move with a grabbed, interruptible feeling.", "Drag", "hand"],
+  ["Ripple", "Expand feedback from the tap point.", "Ripple", "circle-dot"],
+  ["Spring", "Use overshoot and settle for physical motion.", "Spring", "activity"],
+  ["Marquee", "Loop content continuously at linear speed.", "Marquee", "refresh-cw"],
+  ["Ticker", "Roll digits with fixed-width number spacing.", "Number ticker", "badge-123"],
+  ["Squash & stretch", "Deform briefly to imply weight and speed.", "Squash & stretch", "stretch-horizontal"]
+].map(([name, definition, termName, icon]) => ({ name, definition, termName, icon }));
+
 const sectionList = document.querySelector("#section-list");
+const exampleList = document.querySelector("#example-list");
 const demoObject = document.querySelector("#demo-object");
 const demoLabel = document.querySelector("#demo-label");
 const demoStage = document.querySelector("#demo-stage");
@@ -170,7 +189,11 @@ const loopButton = document.querySelector("#loop");
 const subjectToggle = document.querySelector("#subject-toggle");
 const subjectGallery = document.querySelector("#subject-gallery");
 const subjectSize = document.querySelector("#subject-size");
+const subjectSizeValue = document.querySelector("#subject-size-value");
 const subjectSizeControl = document.querySelector(".subject-size-control");
+const subjectSizeUp = document.querySelector("#subject-size-up");
+const subjectSizeDown = document.querySelector("#subject-size-down");
+const libraryModeButtons = document.querySelectorAll(".library-mode-button");
 const reducedMotion = document.querySelector("#reduced-motion");
 const panelSwitchButtons = document.querySelectorAll(".panel-switch-button");
 const panelViews = document.querySelectorAll(".panel-view");
@@ -231,10 +254,23 @@ function renderLibrary() {
   }).join("");
 
   sectionList.innerHTML = sections;
+  renderExamples();
 
   if (window.lucide) {
     window.lucide.createIcons();
   }
+}
+
+function renderExamples() {
+  exampleList.innerHTML = animationExamples.map(example => `
+    <button class="example-button ${example.termName === activeTerm.name ? "is-active" : ""}" data-term="${example.termName}" type="button">
+      <i data-lucide="${example.icon}"></i>
+      <span>
+        <strong>${example.name}</strong>
+        <span>${example.definition}</span>
+      </span>
+    </button>
+  `).join("");
 }
 
 function setActiveTerm(term, shouldPlay = true) {
@@ -310,6 +346,7 @@ function syncControls() {
 
 function syncSubjectSize() {
   document.documentElement.style.setProperty("--subject-size", `${subjectSize.value}vw`);
+  subjectSizeValue.textContent = subjectSize.value;
 }
 
 function setSubject(subject) {
@@ -327,6 +364,13 @@ sectionList.addEventListener("click", event => {
   const button = event.target.closest(".term-button");
   if (!button) return;
   const term = flatTerms.find(item => item.name === button.dataset.name);
+  if (term) setActiveTerm(term);
+});
+
+exampleList.addEventListener("click", event => {
+  const button = event.target.closest(".example-button");
+  if (!button) return;
+  const term = flatTerms.find(item => item.name === button.dataset.term);
   if (term) setActiveTerm(term);
 });
 
@@ -348,6 +392,19 @@ document.querySelector(".segmented").addEventListener("click", event => {
 
 panelSwitchButtons.forEach(button => {
   button.addEventListener("click", () => switchPanel(button.dataset.panel));
+});
+
+libraryModeButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    const isExamples = button.dataset.libraryMode === "examples";
+    libraryModeButtons.forEach(modeButton => {
+      const isActive = modeButton === button;
+      modeButton.classList.toggle("is-active", isActive);
+      modeButton.setAttribute("aria-selected", String(isActive));
+    });
+    sectionList.hidden = isExamples;
+    exampleList.hidden = !isExamples;
+  });
 });
 
 playButton.addEventListener("click", playDemo);
@@ -379,7 +436,17 @@ subjectSize.addEventListener("input", () => {
   playDemo();
 });
 
-["click", "pointerdown"].forEach(eventName => {
+function stepSubjectSize(direction) {
+  const nextValue = Math.min(Number(subjectSize.max), Math.max(Number(subjectSize.min), Number(subjectSize.value) + direction));
+  subjectSize.value = String(nextValue);
+  syncSubjectSize();
+  playDemo();
+}
+
+subjectSizeUp.addEventListener("click", () => stepSubjectSize(4));
+subjectSizeDown.addEventListener("click", () => stepSubjectSize(-4));
+
+["click", "pointerdown", "touchstart"].forEach(eventName => {
   subjectSizeControl.addEventListener(eventName, event => event.stopPropagation());
 });
 
