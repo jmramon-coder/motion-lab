@@ -169,6 +169,8 @@ const playButton = document.querySelector("#play");
 const loopButton = document.querySelector("#loop");
 const subjectToggle = document.querySelector("#subject-toggle");
 const subjectGallery = document.querySelector("#subject-gallery");
+const subjectSize = document.querySelector("#subject-size");
+const subjectSizeControl = document.querySelector(".subject-size-control");
 const reducedMotion = document.querySelector("#reduced-motion");
 const panelSwitchButtons = document.querySelectorAll(".panel-switch-button");
 const panelViews = document.querySelectorAll(".panel-view");
@@ -306,6 +308,10 @@ function syncControls() {
   document.querySelector("#perspective-value").textContent = `${controls.perspective.value}px`;
 }
 
+function syncSubjectSize() {
+  document.documentElement.style.setProperty("--subject-size", `${subjectSize.value}vw`);
+}
+
 function setSubject(subject) {
   if (!subjectAssets[subject]) return;
   subjectImage.src = subjectAssets[subject];
@@ -362,9 +368,19 @@ subjectToggle.addEventListener("click", event => {
 });
 
 subjectGallery.addEventListener("click", event => {
+  event.stopPropagation();
   const button = event.target.closest(".subject-option");
   if (!button) return;
   setSubject(button.dataset.subject);
+});
+
+subjectSize.addEventListener("input", () => {
+  syncSubjectSize();
+  playDemo();
+});
+
+["click", "pointerdown"].forEach(eventName => {
+  subjectSizeControl.addEventListener(eventName, event => event.stopPropagation());
 });
 
 document.addEventListener("click", event => {
@@ -388,6 +404,7 @@ if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
 
 renderLibrary();
 syncControls();
+syncSubjectSize();
 setActiveTerm(activeTerm, false);
 playDemo();
 
