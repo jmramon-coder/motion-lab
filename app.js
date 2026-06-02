@@ -232,7 +232,9 @@ let isSubjectSizing = false;
 const subjectAssets = {
   logo: "assets/lab-mark.png",
   character: "assets/subject-character.png",
-  ball: "assets/subject-ball.png"
+  ball: "assets/subject-ball.png",
+  plane: "assets/subject-plane.png",
+  blob: "assets/subject-blob.png"
 };
 
 function switchPanel(panel) {

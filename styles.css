@@ -186,7 +186,7 @@ p {
   top: 50px;
   right: 10px;
   display: grid;
-  grid-template-columns: repeat(3, 70px);
+  grid-template-columns: repeat(3, 68px);
   gap: 8px;
   padding: 8px;
   border: 1px solid rgba(174, 187, 199, .78);
