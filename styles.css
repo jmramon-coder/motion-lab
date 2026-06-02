@@ -110,7 +110,7 @@ p {
 .top-actions {
   display: inline-flex;
   flex: 0 0 auto;
-  gap: 6px;
+  gap: 5px;
 }
 
 .icon-button:active,
@@ -164,6 +164,49 @@ p {
   line-height: 1.08;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.subject-gallery {
+  position: absolute;
+  z-index: 5;
+  top: 50px;
+  right: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 70px);
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid rgba(174, 187, 199, .78);
+  border-radius: 18px;
+  background: rgba(251, 253, 255, .94);
+  box-shadow: var(--shadow);
+}
+
+.subject-option {
+  display: grid;
+  gap: 5px;
+  justify-items: center;
+  min-width: 0;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  background: transparent;
+  color: var(--muted);
+  padding: 6px 4px;
+  font-size: .66rem;
+  font-weight: 800;
+}
+
+.subject-option img {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 12px rgba(32, 46, 61, .16));
+  pointer-events: none;
+}
+
+.subject-option.is-active {
+  border-color: rgba(37, 111, 143, .34);
+  background: #edf6fa;
+  color: var(--ink);
 }
 
 .sr-only {

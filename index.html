@@ -24,14 +24,31 @@
               <button class="icon-button" id="loop" type="button" aria-label="Loop animation" aria-pressed="false" title="Loop">
                 <i data-lucide="repeat-2"></i>
               </button>
+              <button class="icon-button" id="subject-toggle" type="button" aria-label="Open subject gallery" aria-expanded="false" aria-controls="subject-gallery" title="Subjects">
+                <i data-lucide="images"></i>
+              </button>
             </div>
             <p class="sr-only" id="concept-definition">Element appears or disappears by changing opacity.</p>
+          </div>
+          <div class="subject-gallery" id="subject-gallery" hidden>
+            <button class="subject-option is-active" type="button" data-subject="logo">
+              <img src="assets/lab-mark.png" alt="">
+              <span>Logo</span>
+            </button>
+            <button class="subject-option" type="button" data-subject="character">
+              <img src="assets/subject-character.png" alt="">
+              <span>Character</span>
+            </button>
+            <button class="subject-option" type="button" data-subject="ball">
+              <img src="assets/subject-ball.png" alt="">
+              <span>Ball</span>
+            </button>
           </div>
           <div class="scroll-world" id="scroll-world">
             <div class="parallax back"></div>
             <div class="parallax mid"></div>
             <div class="demo-object" id="demo-object">
-              <img class="lab-mark" src="assets/lab-mark.png" alt="" aria-hidden="true">
+              <img class="lab-mark" id="subject-image" src="assets/lab-mark.png" alt="" aria-hidden="true">
               <span class="sr-only" id="demo-label">Fade</span>
             </div>
           </div>

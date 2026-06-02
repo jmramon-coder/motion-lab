@@ -161,11 +161,14 @@ const demoObject = document.querySelector("#demo-object");
 const demoLabel = document.querySelector("#demo-label");
 const demoStage = document.querySelector("#demo-stage");
 const scrollWorld = document.querySelector("#scroll-world");
+const subjectImage = document.querySelector("#subject-image");
 const conceptTitle = document.querySelector("#concept-title");
 const conceptDefinition = document.querySelector("#concept-definition");
 const activeCategory = document.querySelector("#active-category");
 const playButton = document.querySelector("#play");
 const loopButton = document.querySelector("#loop");
+const subjectToggle = document.querySelector("#subject-toggle");
+const subjectGallery = document.querySelector("#subject-gallery");
 const reducedMotion = document.querySelector("#reduced-motion");
 const panelSwitchButtons = document.querySelectorAll(".panel-switch-button");
 const panelViews = document.querySelectorAll(".panel-view");
@@ -181,6 +184,11 @@ let activeGroup = 0;
 let activeTerm = flatTerms[0];
 let loopEnabled = false;
 let loopTimer = 0;
+const subjectAssets = {
+  logo: "assets/lab-mark.png",
+  character: "assets/subject-character.png",
+  ball: "assets/subject-ball.png"
+};
 
 function switchPanel(panel) {
   panelSwitchButtons.forEach(button => {
@@ -298,6 +306,17 @@ function syncControls() {
   document.querySelector("#perspective-value").textContent = `${controls.perspective.value}px`;
 }
 
+function setSubject(subject) {
+  if (!subjectAssets[subject]) return;
+  subjectImage.src = subjectAssets[subject];
+  document.querySelectorAll(".subject-option").forEach(option => {
+    option.classList.toggle("is-active", option.dataset.subject === subject);
+  });
+  subjectGallery.hidden = true;
+  subjectToggle.setAttribute("aria-expanded", "false");
+  playDemo();
+}
+
 sectionList.addEventListener("click", event => {
   const button = event.target.closest(".term-button");
   if (!button) return;
@@ -336,6 +355,25 @@ loopButton.addEventListener("click", () => {
     window.clearTimeout(loopTimer);
   }
 });
+subjectToggle.addEventListener("click", event => {
+  event.stopPropagation();
+  subjectGallery.hidden = !subjectGallery.hidden;
+  subjectToggle.setAttribute("aria-expanded", String(!subjectGallery.hidden));
+});
+
+subjectGallery.addEventListener("click", event => {
+  const button = event.target.closest(".subject-option");
+  if (!button) return;
+  setSubject(button.dataset.subject);
+});
+
+document.addEventListener("click", event => {
+  if (subjectGallery.hidden) return;
+  if (subjectGallery.contains(event.target) || subjectToggle.contains(event.target)) return;
+  subjectGallery.hidden = true;
+  subjectToggle.setAttribute("aria-expanded", "false");
+});
+
 demoStage.addEventListener("click", playDemo);
 
 reducedMotion.addEventListener("change", () => {
