@@ -12,6 +12,10 @@
   --shadow: 0 18px 50px rgba(32, 46, 61, .16);
   --shadow-soft: 0 8px 24px rgba(32, 46, 61, .1);
   --duration: 720ms;
+  --duration-hold: 828ms;
+  --duration-marquee: 2016ms;
+  --duration-loop: 1440ms;
+  --duration-pulse: 1152ms;
   --delay: 80ms;
   --stagger: 80ms;
   --ease: cubic-bezier(.2,.8,.2,1);
@@ -19,12 +23,54 @@
   --subject-size: 68vw;
   --slide-from-x: -120%;
   --slide-from-y: 0;
+  --swipe-to-x: 160%;
+  --swipe-to-y: 0;
+  --swipe-rotate: 8deg;
+  --marquee-from-x: -125%;
+  --marquee-from-y: 0;
+  --marquee-to-x: 125%;
+  --marquee-to-y: 0;
+  --reveal-start: inset(0 100% 0 0);
   --route-sign: 1;
+  --route-from-x: 86px;
+  --route-from-y: 0;
+  --route-to-x: -37px;
+  --route-to-y: 0;
   --distance: 86px;
+  --distance-neg: -86px;
   --distance-soft: 54px;
+  --distance-soft-neg: -54px;
+  --distance-wide: 125px;
+  --distance-wide-neg: -125px;
+  --distance-30-soft-neg: -16px;
+  --distance-52-soft-neg: -28px;
+  --distance-60-soft: 32px;
+  --distance-70-soft-neg: -38px;
+  --distance-72-soft: 39px;
+  --distance-74: 64px;
+  --distance-75: 65px;
+  --distance-75-neg: -65px;
+  --distance-78-neg: -67px;
+  --distance-80-soft-neg: -43px;
+  --distance-82-neg: -71px;
+  --distance-82-soft-neg: -44px;
+  --distance-86-neg: -74px;
+  --distance-90-soft: 49px;
   --bounce-scale: 1.14;
   --squash-x: 1.1;
   --squash-y: .82;
+  --press-scale: .88;
+  --pulse-scale: 1.09;
+  --float-y: 11px;
+  --shimmer-width: 55%;
+  --ripple-scale: 5.2;
+  --blur-start: 8px;
+  --shake-x: 10px;
+  --shake-x-neg: -10px;
+  --skew-x: 17deg;
+  --skew-y: 7deg;
+  --line-width: 6px;
+  --fade-mid: .15;
   --motion-intensity: 1;
   --origin-x: 8%;
   --origin-y: 92%;
@@ -866,14 +912,14 @@ input[type="range"] {
 
 .animate-fade { animation: fade var(--duration) var(--ease) var(--delay) both; }
 .animate-slide { animation: slide var(--duration) var(--ease) var(--delay) both; }
-.animate-scale { animation: scaleIn var(--duration) var(--ease) var(--delay) both; }
+.animate-scale { transform-origin: var(--origin-x) var(--origin-y); animation: scaleIn var(--duration) var(--ease) var(--delay) both; }
 .animate-pop { animation: pop var(--duration) cubic-bezier(.34,1.56,.64,1) var(--delay) both; }
 .animate-reveal { animation: reveal var(--duration) var(--ease) var(--delay) both; }
 .animate-keyframes { animation: keyframesDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-stagger #demo-label span { animation: textStep var(--duration) var(--ease) both; }
 .animate-steps { animation: steppedDemo var(--duration) steps(5, end) var(--delay) both; }
 .animate-translate { animation: translateDemo var(--duration) var(--ease) var(--delay) both; }
-.animate-rotate { animation: rotateDemo var(--duration) var(--ease) var(--delay) both; }
+.animate-rotate { transform-origin: var(--origin-x) var(--origin-y); animation: rotateDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-skew { animation: skewDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-flip { animation: flipDemo var(--duration) var(--ease) var(--delay) both; transform-style: preserve-3d; }
 .animate-origin { transform-origin: var(--origin-x) var(--origin-y); animation: originDemo var(--duration) var(--ease) var(--delay) both; }
@@ -887,28 +933,28 @@ input[type="range"] {
 .animate-parallax .back { opacity: 1; transform: translateY(-34px); }
 .animate-parallax .mid { opacity: 1; transform: translateY(42px); }
 .animate-press { animation: pressDemo var(--duration) var(--ease) var(--delay) both; }
-.animate-hold { overflow: hidden; animation: holdConfirm calc(var(--duration) * 1.15) var(--ease) var(--delay) both; }
+.animate-hold { overflow: hidden; animation: holdConfirm var(--duration-hold) var(--ease) var(--delay) both; }
 .animate-drag { animation: dragDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-swipe { animation: swipeDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-rubber { animation: rubberDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-shake { animation: shake var(--duration) var(--ease) var(--delay) both; }
 .animate-spring { animation: springDemo var(--duration) cubic-bezier(.34,1.56,.64,1) var(--delay) both; }
-.animate-marquee { animation: marquee calc(var(--duration) * 2.8) linear var(--delay) infinite; }
-.animate-orbit { animation: orbit calc(var(--duration) * 2) linear var(--delay) infinite; }
-.animate-pulse { animation: pulse calc(var(--duration) * 1.6) ease-in-out var(--delay) infinite alternate; }
-.animate-float { animation: float calc(var(--duration) * 2) ease-in-out var(--delay) infinite alternate; }
+.animate-marquee { animation: marquee var(--duration-marquee) linear var(--delay) infinite; }
+.animate-orbit { animation: orbit var(--duration-loop) linear var(--delay) infinite; }
+.animate-pulse { animation: pulse var(--duration-pulse) ease-in-out var(--delay) infinite alternate; }
+.animate-float { animation: float var(--duration-loop) ease-in-out var(--delay) infinite alternate; }
 .animate-blur { animation: blurDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-line { animation: lineDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-shimmer { overflow: hidden; }
-.animate-shimmer::before { animation: shimmer calc(var(--duration) * 1.6) linear var(--delay) infinite; background: linear-gradient(90deg, transparent, rgba(255,255,255,.62), transparent); height: 100%; transform: translateX(-130%); width: 55%; }
-.animate-hold::before { animation: holdFill calc(var(--duration) * 1.15) linear var(--delay) both; }
+.animate-shimmer::before { animation: shimmer var(--duration-pulse) linear var(--delay) infinite; background: linear-gradient(90deg, transparent, rgba(255,255,255,.7), transparent); height: 100%; transform: translateX(-130%); width: var(--shimmer-width); }
+.animate-hold::before { animation: holdFill var(--duration-hold) linear var(--delay) both; }
 .animate-ripple { animation: pressDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-ripple::before { animation: ripple var(--duration) var(--ease) var(--delay) both; }
 .animate-ticker #demo-label { animation: ticker var(--duration) steps(6, end) var(--delay) both; font-variant-numeric: tabular-nums; }
 .animate-typewriter #demo-label { width: 9ch; animation: typewriter var(--duration) steps(9, end) var(--delay) both; }
 .animate-performance { animation: performanceDemo var(--duration) steps(7, end) var(--delay) both; }
 .animate-anticipation { animation: anticipation var(--duration) var(--ease) var(--delay) both; }
-.animate-follow { animation: followThrough calc(var(--duration) * 1.15) var(--ease) var(--delay) both; }
+.animate-follow { animation: followThrough var(--duration-hold) var(--ease) var(--delay) both; }
 .animate-squash { animation: squash var(--duration) var(--ease) var(--delay) both; }
 .animate-trail { animation: trailMove var(--duration) var(--ease) var(--delay) both; }
 .animate-trail .lab-mark {
@@ -934,7 +980,8 @@ input[type="range"] {
 .animate-hold::before,
 .animate-ripple::before,
 .animate-shared::before,
-.animate-layout::before {
+.animate-layout::before,
+.animate-shimmer::before {
   position: absolute;
   z-index: 0;
   content: "";
@@ -962,7 +1009,17 @@ input[type="range"] {
   border: 1px dashed rgba(37, 111, 143, .36);
   border-radius: 18px;
   opacity: .7;
-  transform: translate(calc(var(--distance) * -.75), calc(var(--distance-soft) * .42)) scale(.58);
+  transform: translate(var(--distance-75-neg), var(--distance-30-soft-neg)) scale(.58);
+}
+
+.animate-shimmer::before {
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.animate-morph .lab-mark {
+  animation: morphImage var(--duration) var(--ease) var(--delay) both;
 }
 
 .animate-trail::after {
@@ -970,49 +1027,50 @@ input[type="range"] {
   transform: translateX(-34px);
 }
 
-@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade { from { opacity: var(--fade-mid); } to { opacity: 1; } }
 @keyframes slide { from { opacity: 0; transform: translate(var(--slide-from-x), var(--slide-from-y)); } to { opacity: 1; transform: translate(0); } }
 @keyframes scaleIn { from { opacity: 0; transform: scale(.35); } to { opacity: 1; transform: scale(1); } }
 @keyframes pop { 0% { opacity: 0; transform: scale(.4); } 68% { opacity: 1; transform: scale(var(--bounce-scale)); } 100% { transform: scale(1); } }
-@keyframes reveal { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0); } }
-@keyframes keyframesDemo { 0% { transform: translateX(calc(var(--distance) * -.75)); } 50% { transform: translateY(calc(var(--distance-soft) * -.8)) rotate(14deg); } 100% { transform: translateX(calc(var(--distance) * .75)); } }
+@keyframes reveal { from { clip-path: var(--reveal-start); } to { clip-path: inset(0); } }
+@keyframes keyframesDemo { 0% { transform: translateX(var(--distance-75-neg)); } 50% { transform: translateY(var(--distance-80-soft-neg)) rotate(14deg); } 100% { transform: translateX(var(--distance-75)); } }
 @keyframes textStep { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes steppedDemo { from { transform: translateX(-76px); } to { transform: translateX(76px); } }
-@keyframes translateDemo { from { transform: translate(calc(var(--distance) * -.78), var(--distance-soft)); } to { transform: translate(calc(var(--distance) * .74), calc(var(--distance-soft) * -.82)); } }
+@keyframes steppedDemo { from { transform: translateX(var(--distance-neg)); } to { transform: translateX(var(--distance)); } }
+@keyframes translateDemo { from { transform: translate(var(--distance-78-neg), var(--distance-soft)); } to { transform: translate(var(--distance-74), var(--distance-82-soft-neg)); } }
 @keyframes rotateDemo { to { transform: rotate(360deg); } }
-@keyframes skewDemo { 0% { transform: skew(0); } 55% { transform: skew(-18deg, 8deg); } 100% { transform: skew(0); } }
+@keyframes skewDemo { 0% { transform: skew(0); } 55% { transform: skew(var(--skew-x), var(--skew-y)); } 100% { transform: skew(0); } }
 @keyframes flipDemo { from { transform: rotateY(0); } to { transform: rotateY(180deg); } }
 @keyframes originDemo { from { transform: scale(.18); } to { transform: scale(1); } }
-@keyframes crossfade { 0% { opacity: 1; filter: saturate(.72); } 50% { opacity: .18; filter: saturate(.72); } 100% { opacity: 1; filter: saturate(1.08); } }
+@keyframes crossfade { 0% { opacity: 1; filter: saturate(.72); } 50% { opacity: var(--fade-mid); filter: saturate(.72); } 100% { opacity: 1; filter: saturate(1.08); } }
 @keyframes morph { 0% { border-radius: 6px; } 50% { border-radius: 26px 8px 26px 8px; transform: scaleX(1.18); } 100% { border-radius: 999px; } }
-@keyframes sharedDemo { 0% { opacity: .72; transform: translate(calc(var(--distance) * -.72), calc(var(--distance-soft) * .45)) scale(.48); } 55% { opacity: 1; transform: translate(8px, -10px) scale(1.08); } 100% { transform: translate(0) scale(1); } }
+@keyframes morphImage { 0% { clip-path: inset(0 18% 0 18% round 10px); } 50% { clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); transform: scaleX(1.12); } 100% { clip-path: circle(48% at 50% 50%); } }
+@keyframes sharedDemo { 0% { opacity: .72; transform: translate(var(--distance-75-neg), var(--distance-30-soft-neg)) scale(.48); } 55% { opacity: 1; transform: translate(8px, -10px) scale(1.08); } 100% { transform: translate(0) scale(1); } }
 @keyframes layoutDemo { 0% { width: min(42vw, 160px); } 100% { width: min(66vw, 260px); } }
-@keyframes collapseDemo { 0% { transform: scaleY(.22); opacity: .55; } 100% { transform: scaleY(1); opacity: 1; } }
-@keyframes directionDemo { from { opacity: 0; transform: translateX(calc(var(--route-sign) * var(--distance))); } to { opacity: 1; transform: translateX(calc(var(--route-sign) * var(--distance-soft) * -.7)); } }
+@keyframes collapseDemo { 0% { transform: scaleY(var(--fade-mid)); opacity: .55; } 100% { transform: scaleY(1); opacity: 1; } }
+@keyframes directionDemo { from { opacity: 0; transform: translate(var(--route-from-x), var(--route-from-y)); } to { opacity: 1; transform: translate(var(--route-to-x), var(--route-to-y)); } }
 @keyframes scrollReveal { from { opacity: 0; transform: translate(var(--slide-from-x), var(--slide-from-y)); } to { opacity: 1; transform: translateY(0); } }
-@keyframes pressDemo { 0%, 100% { transform: scale(1); } 35% { transform: scale(.9); } }
+@keyframes pressDemo { 0%, 100% { transform: scale(1); } 35% { transform: scale(var(--press-scale)); } }
 @keyframes holdConfirm { 0% { filter: saturate(.9); } 72% { filter: saturate(1.16); } 100% { filter: saturate(1.06); } }
 @keyframes holdFill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-@keyframes dragDemo { 0% { transform: translateX(calc(var(--distance) * -.86)); } 72% { transform: translateX(var(--distance)); } 100% { transform: translateX(var(--distance-soft)); } }
-@keyframes swipeDemo { to { opacity: 0; transform: translate(var(--slide-from-x), var(--slide-from-y)) rotate(calc(8deg * var(--route-sign))); } }
-@keyframes rubberDemo { 0% { transform: translateX(0); } 45% { transform: translateX(var(--distance)) scaleX(.88); } 70% { transform: translateX(calc(var(--distance-soft) * -.3)) scaleX(1.05); } 100% { transform: translateX(0); } }
-@keyframes shake { 10%, 90% { transform: translateX(-3px); } 20%, 80% { transform: translateX(6px); } 30%, 50%, 70% { transform: translateX(-10px); } 40%, 60% { transform: translateX(10px); } }
-@keyframes ripple { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(5.2); } }
-@keyframes springDemo { 0% { transform: translateY(66px) scale(.8); } 58% { transform: translateY(calc(var(--bounce-scale) * -14px)) scale(var(--bounce-scale)); } 78% { transform: translateY(8px) scale(.98); } 100% { transform: translateY(0) scale(1); } }
-@keyframes marquee { from { transform: translateX(125%); } to { transform: translateX(-125%); } }
-@keyframes orbit { from { transform: rotate(0deg) translateX(70px) rotate(0deg); } to { transform: rotate(360deg) translateX(70px) rotate(-360deg); } }
-@keyframes pulse { from { opacity: .62; transform: scale(.96); } to { opacity: 1; transform: scale(1.08); } }
-@keyframes float { from { transform: translateY(16px); } to { transform: translateY(-18px); } }
-@keyframes blurDemo { from { filter: blur(8px); opacity: .2; } to { filter: blur(0); opacity: 1; } }
-@keyframes lineDemo { from { outline: 0 solid rgba(255,255,255,.8); outline-offset: 18px; } to { outline: 7px solid rgba(255,255,255,.05); outline-offset: -8px; } }
+@keyframes dragDemo { 0% { transform: translateX(var(--distance-86-neg)); } 72% { transform: translateX(var(--distance)); } 100% { transform: translateX(var(--distance-soft)); } }
+@keyframes swipeDemo { to { opacity: 0; transform: translate(var(--swipe-to-x), var(--swipe-to-y)) rotate(var(--swipe-rotate)); } }
+@keyframes rubberDemo { 0% { transform: translateX(0); } 45% { transform: translateX(var(--distance)) scaleX(.88); } 70% { transform: translateX(var(--distance-30-soft-neg)) scaleX(1.05); } 100% { transform: translateX(0); } }
+@keyframes shake { 10%, 90% { transform: translateX(-3px); } 20%, 80% { transform: translateX(6px); } 30%, 50%, 70% { transform: translateX(var(--shake-x-neg)); } 40%, 60% { transform: translateX(var(--shake-x)); } }
+@keyframes ripple { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(var(--ripple-scale)); } }
+@keyframes springDemo { 0% { transform: translateY(66px) scale(.8); } 58% { transform: translateY(-18px) scale(var(--bounce-scale)); } 78% { transform: translateY(8px) scale(.98); } 100% { transform: translateY(0) scale(1); } }
+@keyframes marquee { from { transform: translate(var(--marquee-from-x), var(--marquee-from-y)); } to { transform: translate(var(--marquee-to-x), var(--marquee-to-y)); } }
+@keyframes orbit { from { transform: rotate(0deg) translateX(var(--distance-soft)) rotate(0deg); } to { transform: rotate(360deg) translateX(var(--distance-soft)) rotate(-360deg); } }
+@keyframes pulse { from { opacity: .62; transform: scale(.96); } to { opacity: 1; transform: scale(var(--pulse-scale)); } }
+@keyframes float { from { transform: translateY(var(--float-y)); } to { transform: translateY(calc(0px - var(--float-y))); } }
+@keyframes blurDemo { from { filter: blur(var(--blur-start)); opacity: .2; } to { filter: blur(0); opacity: 1; } }
+@keyframes lineDemo { from { outline: 0 solid rgba(255,255,255,.8); outline-offset: 18px; } to { outline: var(--line-width) solid rgba(255,255,255,.05); outline-offset: -8px; } }
 @keyframes shimmer { to { transform: translateX(230%); } }
 @keyframes ticker { from { transform: translateY(36px); } to { transform: translateY(0); } }
 @keyframes typewriter { from { width: 0; } to { width: 9ch; } }
 @keyframes performanceDemo { from { transform: translateX(-96px); } to { transform: translateX(96px); } }
-@keyframes anticipation { 0% { transform: translateX(0); } 22% { transform: translateX(calc(var(--distance-soft) * -.52)) scale(.96); } 100% { transform: translateX(var(--distance)); } }
-@keyframes followThrough { 0% { transform: translateX(calc(var(--distance) * -.82)) rotate(-8deg); } 62% { transform: translateX(calc(var(--distance-soft) * .9)) rotate(12deg); } 82% { transform: translateX(calc(var(--distance-soft) * .6)) rotate(-4deg); } 100% { transform: translateX(calc(var(--distance-soft) * .72)) rotate(0); } }
-@keyframes squash { 0% { transform: translateY(calc(var(--distance-soft) * -1)) scale(1, 1); } 45% { transform: translateY(var(--distance-soft)) scale(var(--squash-x), var(--squash-y)); } 70% { transform: translateY(8px) scale(.86, 1.12); } 100% { transform: translateY(0) scale(1); } }
-@keyframes trailMove { from { transform: translateX(calc(var(--distance) * -1)); } to { transform: translateX(var(--distance)); } }
+@keyframes anticipation { 0% { transform: translateX(0); } 22% { transform: translateX(var(--distance-52-soft-neg)) scale(.96); } 100% { transform: translateX(var(--distance)); } }
+@keyframes followThrough { 0% { transform: translateX(var(--distance-82-neg)) rotate(-8deg); } 62% { transform: translateX(var(--distance-90-soft)) rotate(12deg); } 82% { transform: translateX(var(--distance-60-soft)) rotate(-4deg); } 100% { transform: translateX(var(--distance-72-soft)) rotate(0); } }
+@keyframes squash { 0% { transform: translateY(var(--distance-soft-neg)) scale(1, 1); } 45% { transform: translateY(var(--distance-soft)) scale(var(--squash-x), var(--squash-y)); } 70% { transform: translateY(8px) scale(.86, 1.12); } 100% { transform: translateY(0) scale(1); } }
+@keyframes trailMove { from { transform: translateX(var(--distance-neg)); } to { transform: translateX(var(--distance)); } }
 @keyframes galleryPop { from { opacity: 0; transform: translateY(-4px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
 body.motion-reduced .demo-object,

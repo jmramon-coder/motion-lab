@@ -73,7 +73,7 @@ const groups = [
   {
     name: "Looping & Ambient Motion",
     terms: [
-      ["Marquee", "Text or content that scrolls continuously in a loop.", "marquee"],
+      ["Marquee", "An element travels continuously across the stage in a loop.", "marquee"],
       ["Alternate (yoyo)", "A loop that plays forward then reverses each iteration.", "pulse"],
       ["Orbit", "An element circling around another in a continuous path.", "orbit"],
       ["Pulse", "A gentle repeating scale or opacity change to draw attention.", "pulse"],
@@ -194,7 +194,7 @@ let currentSubject = "logo";
 let currentEase = "ease-out";
 let booting = true;
 let copyTimer = 0;
-const textDemos = new Set(["stagger", "marquee", "ticker", "typewriter"]);
+const textDemos = new Set(["stagger", "ticker", "typewriter"]);
 const contextState = {
   direction: "right",
   distance: 86,
@@ -268,7 +268,7 @@ const prompts = {
   shake: "Use a short shake to signal an invalid action. Keep the distance small and the duration brief so it reads as feedback, not punishment.",
   ripple: "Trigger a ripple from the tap point. The circle should expand and fade quickly to confirm the interaction.",
   spring: "Animate this element with spring motion using tension and damping instead of a fixed-feeling duration. Let it overshoot slightly and settle.",
-  marquee: "Loop this content as a marquee with constant linear speed. Reserve this for ambient or decorative motion, not important text.",
+  marquee: "Loop this element across the stage with constant linear speed. Keep it ambient and avoid using it for important readable content.",
   orbit: "Animate this element in an orbit around a center point. Keep the path continuous and predictable.",
   pulse: "Use a gentle pulse in scale or opacity to draw attention. Keep it subtle for frequently viewed UI.",
   float: "Add a slow floating idle animation so the subject feels alive while waiting for interaction.",
@@ -422,6 +422,45 @@ function setDirection(direction) {
   document.documentElement.style.setProperty("--slide-from-x", x);
   document.documentElement.style.setProperty("--slide-from-y", y);
   document.documentElement.style.setProperty("--route-sign", route);
+
+  const marquee = {
+    left: ["125%", "0", "-125%", "0"],
+    right: ["-125%", "0", "125%", "0"],
+    top: ["0", "125%", "0", "-125%"],
+    bottom: ["0", "-125%", "0", "125%"]
+  };
+  const [marqueeFromX, marqueeFromY, marqueeToX, marqueeToY] = marquee[direction] || marquee.right;
+  document.documentElement.style.setProperty("--marquee-from-x", marqueeFromX);
+  document.documentElement.style.setProperty("--marquee-from-y", marqueeFromY);
+  document.documentElement.style.setProperty("--marquee-to-x", marqueeToX);
+  document.documentElement.style.setProperty("--marquee-to-y", marqueeToY);
+
+  const reveal = {
+    left: "inset(0 0 0 100%)",
+    right: "inset(0 100% 0 0)",
+    top: "inset(100% 0 0 0)",
+    bottom: "inset(0 0 100% 0)"
+  };
+  document.documentElement.style.setProperty("--reveal-start", reveal[direction] || reveal.right);
+
+  const swipe = {
+    left: ["-160%", "0", "-8deg"],
+    right: ["160%", "0", "8deg"],
+    top: ["0", "-160%", "-6deg"],
+    bottom: ["0", "160%", "6deg"]
+  };
+  const [swipeX, swipeY, swipeRotate] = swipe[direction] || swipe.right;
+  document.documentElement.style.setProperty("--swipe-to-x", swipeX);
+  document.documentElement.style.setProperty("--swipe-to-y", swipeY);
+  document.documentElement.style.setProperty("--swipe-rotate", swipeRotate);
+
+  const distance = contextState.distance;
+  const soft = Math.round(distance * .62);
+  const horizontalSign = direction === "left" ? -1 : 1;
+  document.documentElement.style.setProperty("--route-from-x", direction === "top" || direction === "bottom" ? "0px" : `${horizontalSign * distance}px`);
+  document.documentElement.style.setProperty("--route-from-y", direction === "top" ? `${-distance}px` : direction === "bottom" ? `${distance}px` : "0px");
+  document.documentElement.style.setProperty("--route-to-x", direction === "top" || direction === "bottom" ? "0px" : `${horizontalSign * Math.round(soft * -.7)}px`);
+  document.documentElement.style.setProperty("--route-to-y", direction === "top" ? `${Math.round(soft * .7)}px` : direction === "bottom" ? `${Math.round(soft * -.7)}px` : "0px");
 }
 
 function setOrigin(origin) {
@@ -439,39 +478,99 @@ function setOrigin(origin) {
 }
 
 function syncContextVars() {
-  document.documentElement.style.setProperty("--distance", `${contextState.distance}px`);
-  document.documentElement.style.setProperty("--distance-soft", `${Math.round(contextState.distance * .62)}px`);
+  const distance = contextState.distance;
+  const soft = Math.round(distance * .62);
+  const vars = {
+    "--distance": distance,
+    "--distance-neg": -distance,
+    "--distance-soft": soft,
+    "--distance-soft-neg": -soft,
+    "--distance-wide": Math.round(distance * 1.45),
+    "--distance-wide-neg": Math.round(distance * -1.45),
+    "--distance-30-soft-neg": Math.round(soft * -.3),
+    "--distance-52-soft-neg": Math.round(soft * -.52),
+    "--distance-60-soft": Math.round(soft * .6),
+    "--distance-70-soft-neg": Math.round(soft * -.7),
+    "--distance-72-soft": Math.round(soft * .72),
+    "--distance-74": Math.round(distance * .74),
+    "--distance-75": Math.round(distance * .75),
+    "--distance-75-neg": Math.round(distance * -.75),
+    "--distance-78-neg": Math.round(distance * -.78),
+    "--distance-80-soft-neg": Math.round(soft * -.8),
+    "--distance-82-neg": Math.round(distance * -.82),
+    "--distance-82-soft-neg": Math.round(soft * -.82),
+    "--distance-86-neg": Math.round(distance * -.86),
+    "--distance-90-soft": Math.round(soft * .9)
+  };
+  Object.entries(vars).forEach(([name, value]) => {
+    document.documentElement.style.setProperty(name, `${value}px`);
+  });
   document.documentElement.style.setProperty("--bounce-scale", `${1 + contextState.bounce / 100}`);
   document.documentElement.style.setProperty("--squash-x", `${1 + contextState.bounce / 140}`);
   document.documentElement.style.setProperty("--squash-y", `${Math.max(.52, 1 - contextState.bounce / 110)}`);
+  document.documentElement.style.setProperty("--press-scale", `${Math.max(.8, 1 - contextState.bounce / 120)}`);
+  document.documentElement.style.setProperty("--pulse-scale", `${1 + contextState.bounce / 160}`);
+  document.documentElement.style.setProperty("--float-y", `${Math.max(6, Math.round(contextState.bounce * .8))}px`);
+  document.documentElement.style.setProperty("--shimmer-width", `${Math.round(contextState.intensity * .55)}%`);
+  document.documentElement.style.setProperty("--ripple-scale", `${Math.max(2.8, contextState.intensity / 18)}`);
+  document.documentElement.style.setProperty("--blur-start", `${Math.round(contextState.intensity / 12)}px`);
+  document.documentElement.style.setProperty("--shake-x", `${Math.round(contextState.intensity / 10)}px`);
+  document.documentElement.style.setProperty("--shake-x-neg", `${Math.round(contextState.intensity / -10)}px`);
+  document.documentElement.style.setProperty("--skew-x", `${Math.round(contextState.intensity / 6)}deg`);
+  document.documentElement.style.setProperty("--skew-y", `${Math.round(contextState.intensity / 14)}deg`);
+  document.documentElement.style.setProperty("--line-width", `${Math.max(2, Math.round(contextState.intensity / 16))}px`);
+  document.documentElement.style.setProperty("--fade-mid", `${Math.max(.08, 1 - contextState.intensity / 118)}`);
   document.documentElement.style.setProperty("--motion-intensity", `${contextState.intensity / 100}`);
   setDirection(contextState.direction);
   setOrigin(contextState.origin);
 }
 
 function contextConfigFor(term) {
-  if (["slide", "direction", "scroll", "swipe"].includes(term.demo)) {
-    return { kind: "direction", label: "Direction" };
-  }
-  if (["translate", "drag", "rubber", "trail", "keyframes"].includes(term.demo)) {
-    return { kind: "distance", label: "Distance" };
-  }
-  if (["spring", "pop", "squash", "follow", "anticipation"].includes(term.demo)) {
-    return { kind: "bounce", label: "Bounce" };
-  }
-  if (term.demo === "origin") {
-    return { kind: "origin", label: "Origin" };
-  }
-  if (term.demo === "stagger") {
-    return { kind: "count", label: "Items" };
-  }
-  if (term.demo === "ticker") {
-    return { kind: "target", label: "Target" };
-  }
-  if (term.demo === "typewriter") {
-    return { kind: "text", label: "Text" };
-  }
-  return { kind: "intensity", label: "Intensity" };
+  const configs = {
+    anticipation: { kind: "bounce", label: "Wind-up" },
+    blur: { kind: "intensity", label: "Blur amount" },
+    collapse: { kind: "intensity", label: "Compression" },
+    crossfade: { kind: "intensity", label: "Fade depth" },
+    direction: { kind: "direction", label: "Route" },
+    drag: { kind: "distance", label: "Travel" },
+    fade: { kind: "intensity", label: "Opacity range" },
+    flip: { kind: "intensity", label: "Flip depth" },
+    follow: { kind: "bounce", label: "Follow-through" },
+    hold: { kind: "intensity", label: "Progress weight" },
+    keyframes: { kind: "distance", label: "Path size" },
+    layout: { kind: "distance", label: "Layout shift" },
+    line: { kind: "intensity", label: "Stroke weight" },
+    marquee: { kind: "direction", label: "Loop direction" },
+    morph: { kind: "intensity", label: "Morph amount" },
+    orbit: { kind: "distance", label: "Orbit radius" },
+    origin: { kind: "origin", label: "Origin" },
+    parallax: { kind: "distance", label: "Layer depth" },
+    pop: { kind: "bounce", label: "Overshoot" },
+    press: { kind: "bounce", label: "Press depth" },
+    pulse: { kind: "bounce", label: "Pulse size" },
+    reveal: { kind: "direction", label: "Reveal edge" },
+    ripple: { kind: "intensity", label: "Ripple size" },
+    rotate: { kind: "origin", label: "Spin origin" },
+    rubber: { kind: "distance", label: "Resistance" },
+    scale: { kind: "origin", label: "Scale origin" },
+    scroll: { kind: "direction", label: "Reveal direction" },
+    shake: { kind: "intensity", label: "Shake strength" },
+    shared: { kind: "distance", label: "Travel" },
+    shimmer: { kind: "intensity", label: "Sheen width" },
+    skew: { kind: "intensity", label: "Slant" },
+    slide: { kind: "direction", label: "Entry direction" },
+    spring: { kind: "bounce", label: "Bounce" },
+    squash: { kind: "bounce", label: "Deformation" },
+    stagger: { kind: "count", label: "Items" },
+    steps: { kind: "distance", label: "Step distance" },
+    swipe: { kind: "direction", label: "Dismiss direction" },
+    ticker: { kind: "target", label: "Target" },
+    trail: { kind: "distance", label: "Trail length" },
+    translate: { kind: "distance", label: "Distance" },
+    typewriter: { kind: "text", label: "Text" },
+    float: { kind: "bounce", label: "Float height" }
+  };
+  return configs[term.demo] || { kind: "intensity", label: "Intensity" };
 }
 
 function renderContextControls() {
@@ -636,7 +735,12 @@ function scheduleLoop() {
 }
 
 function syncControls() {
-  document.documentElement.style.setProperty("--duration", `${controls.duration.value}ms`);
+  const duration = Number(controls.duration.value);
+  document.documentElement.style.setProperty("--duration", `${duration}ms`);
+  document.documentElement.style.setProperty("--duration-hold", `${Math.round(duration * 1.15)}ms`);
+  document.documentElement.style.setProperty("--duration-marquee", `${Math.round(duration * 2.8)}ms`);
+  document.documentElement.style.setProperty("--duration-loop", `${Math.round(duration * 2)}ms`);
+  document.documentElement.style.setProperty("--duration-pulse", `${Math.round(duration * 1.6)}ms`);
   document.documentElement.style.setProperty("--delay", `${controls.delay.value}ms`);
   document.documentElement.style.setProperty("--stagger", `${controls.stagger.value}ms`);
   document.documentElement.style.setProperty("--perspective", `${controls.perspective.value}px`);
