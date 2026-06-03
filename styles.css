@@ -17,6 +17,17 @@
   --ease: cubic-bezier(.2,.8,.2,1);
   --perspective: 720px;
   --subject-size: 68vw;
+  --slide-from-x: -120%;
+  --slide-from-y: 0;
+  --route-sign: 1;
+  --distance: 86px;
+  --distance-soft: 54px;
+  --bounce-scale: 1.14;
+  --squash-x: 1.1;
+  --squash-y: .82;
+  --motion-intensity: 1;
+  --origin-x: 8%;
+  --origin-y: 92%;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --app-height: 100svh;
@@ -214,6 +225,19 @@ p {
   font-weight: 800;
 }
 
+.subject-option span {
+  display: grid;
+  gap: 1px;
+  line-height: 1.05;
+}
+
+.subject-option small {
+  color: var(--muted);
+  font-size: .52rem;
+  font-weight: 700;
+  text-transform: lowercase;
+}
+
 .subject-option img {
   width: 46px;
   height: 46px;
@@ -370,6 +394,37 @@ p {
   user-select: none;
 }
 
+.demo-label {
+  position: relative;
+  z-index: 1;
+  display: none;
+  max-width: 92%;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: clamp(1rem, 7vw, 2.1rem);
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  text-overflow: clip;
+  white-space: nowrap;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .7);
+}
+
+.demo-object.text-demo .lab-mark {
+  opacity: .14;
+  transform: scale(.76);
+}
+
+.demo-object.text-demo .demo-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.animate-stagger .demo-label {
+  gap: 1px;
+}
+
 .demo-object::after {
   position: absolute;
   z-index: -1;
@@ -402,6 +457,74 @@ p {
   transform: none;
   transition: none;
   padding-bottom: var(--safe-bottom);
+}
+
+.use-strip {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 56px;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(216, 225, 232, .86);
+  background: rgba(246, 249, 252, .88);
+}
+
+.use-copy {
+  min-width: 0;
+}
+
+.use-copy strong,
+.use-copy span {
+  display: block;
+}
+
+.use-copy strong {
+  overflow: hidden;
+  font-size: .82rem;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.use-copy span {
+  display: -webkit-box;
+  margin-top: 3px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: .66rem;
+  line-height: 1.25;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.use-actions {
+  display: inline-flex;
+  gap: 5px;
+}
+
+.mini-action {
+  min-height: 30px;
+  padding: 0 8px;
+  border: 1px solid rgba(174, 187, 199, .72);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: .68rem;
+  font-weight: 850;
+  box-shadow: 0 4px 10px rgba(32, 46, 61, .06);
+}
+
+.copy-feedback {
+  position: absolute;
+  right: 10px;
+  bottom: -20px;
+  z-index: 2;
+  margin: 0;
+  color: var(--accent);
+  font-size: .64rem;
+  font-weight: 850;
 }
 
 .sheet-body {
@@ -543,6 +666,69 @@ p {
   display: grid;
   gap: 16px;
   padding: 14px 14px 0;
+}
+
+.context-controls {
+  padding: 14px 14px 0;
+}
+
+.context-controls:empty {
+  display: none;
+}
+
+.context-control {
+  display: grid;
+  gap: 8px;
+}
+
+.context-control > span {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: .78rem;
+  font-weight: 750;
+}
+
+.context-control strong {
+  color: var(--ink);
+}
+
+.context-control input[type="text"] {
+  width: 100%;
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0 10px;
+}
+
+.chip-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.origin-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.chip {
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: .68rem;
+  font-weight: 850;
+  text-transform: capitalize;
+}
+
+.chip.is-active {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: white;
 }
 
 .control {
@@ -690,9 +876,10 @@ input[type="range"] {
 .animate-rotate { animation: rotateDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-skew { animation: skewDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-flip { animation: flipDemo var(--duration) var(--ease) var(--delay) both; transform-style: preserve-3d; }
-.animate-origin { transform-origin: 8% 92%; animation: originDemo var(--duration) var(--ease) var(--delay) both; }
+.animate-origin { transform-origin: var(--origin-x) var(--origin-y); animation: originDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-crossfade { animation: crossfade var(--duration) var(--ease) var(--delay) both; }
 .animate-morph { animation: morph var(--duration) var(--ease) var(--delay) both; }
+.animate-shared { animation: sharedDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-layout { animation: layoutDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-collapse { animation: collapseDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-direction { animation: directionDemo var(--duration) var(--ease) var(--delay) both; }
@@ -700,6 +887,7 @@ input[type="range"] {
 .animate-parallax .back { opacity: 1; transform: translateY(-34px); }
 .animate-parallax .mid { opacity: 1; transform: translateY(42px); }
 .animate-press { animation: pressDemo var(--duration) var(--ease) var(--delay) both; }
+.animate-hold { overflow: hidden; animation: holdConfirm calc(var(--duration) * 1.15) var(--ease) var(--delay) both; }
 .animate-drag { animation: dragDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-swipe { animation: swipeDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-rubber { animation: rubberDemo var(--duration) var(--ease) var(--delay) both; }
@@ -713,6 +901,9 @@ input[type="range"] {
 .animate-line { animation: lineDemo var(--duration) var(--ease) var(--delay) both; }
 .animate-shimmer { overflow: hidden; }
 .animate-shimmer::before { animation: shimmer calc(var(--duration) * 1.6) linear var(--delay) infinite; background: linear-gradient(90deg, transparent, rgba(255,255,255,.62), transparent); height: 100%; transform: translateX(-130%); width: 55%; }
+.animate-hold::before { animation: holdFill calc(var(--duration) * 1.15) linear var(--delay) both; }
+.animate-ripple { animation: pressDemo var(--duration) var(--ease) var(--delay) both; }
+.animate-ripple::before { animation: ripple var(--duration) var(--ease) var(--delay) both; }
 .animate-ticker #demo-label { animation: ticker var(--duration) steps(6, end) var(--delay) both; font-variant-numeric: tabular-nums; }
 .animate-typewriter #demo-label { width: 9ch; animation: typewriter var(--duration) steps(9, end) var(--delay) both; }
 .animate-performance { animation: performanceDemo var(--duration) steps(7, end) var(--delay) both; }
@@ -740,37 +931,74 @@ input[type="range"] {
   filter: blur(1px);
 }
 
+.animate-hold::before,
+.animate-ripple::before,
+.animate-shared::before,
+.animate-layout::before {
+  position: absolute;
+  z-index: 0;
+  content: "";
+  pointer-events: none;
+}
+
+.animate-hold::before {
+  inset: auto 12% 8% 12%;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  transform-origin: left;
+}
+
+.animate-ripple::before {
+  inset: 30%;
+  border: 2px solid rgba(37, 111, 143, .42);
+  border-radius: 50%;
+  background: rgba(37, 111, 143, .08);
+}
+
+.animate-shared::before,
+.animate-layout::before {
+  inset: 12%;
+  border: 1px dashed rgba(37, 111, 143, .36);
+  border-radius: 18px;
+  opacity: .7;
+  transform: translate(calc(var(--distance) * -.75), calc(var(--distance-soft) * .42)) scale(.58);
+}
+
 .animate-trail::after {
   opacity: .18;
   transform: translateX(-34px);
 }
 
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slide { from { opacity: 0; transform: translateX(-120%); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slide { from { opacity: 0; transform: translate(var(--slide-from-x), var(--slide-from-y)); } to { opacity: 1; transform: translate(0); } }
 @keyframes scaleIn { from { opacity: 0; transform: scale(.35); } to { opacity: 1; transform: scale(1); } }
-@keyframes pop { 0% { opacity: 0; transform: scale(.4); } 68% { opacity: 1; transform: scale(1.16); } 100% { transform: scale(1); } }
+@keyframes pop { 0% { opacity: 0; transform: scale(.4); } 68% { opacity: 1; transform: scale(var(--bounce-scale)); } 100% { transform: scale(1); } }
 @keyframes reveal { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0); } }
-@keyframes keyframesDemo { 0% { transform: translateX(-60px); } 50% { transform: translateY(-42px) rotate(14deg); } 100% { transform: translateX(58px); } }
+@keyframes keyframesDemo { 0% { transform: translateX(calc(var(--distance) * -.75)); } 50% { transform: translateY(calc(var(--distance-soft) * -.8)) rotate(14deg); } 100% { transform: translateX(calc(var(--distance) * .75)); } }
 @keyframes textStep { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes steppedDemo { from { transform: translateX(-76px); } to { transform: translateX(76px); } }
-@keyframes translateDemo { from { transform: translate(-68px, 52px); } to { transform: translate(64px, -44px); } }
+@keyframes translateDemo { from { transform: translate(calc(var(--distance) * -.78), var(--distance-soft)); } to { transform: translate(calc(var(--distance) * .74), calc(var(--distance-soft) * -.82)); } }
 @keyframes rotateDemo { to { transform: rotate(360deg); } }
 @keyframes skewDemo { 0% { transform: skew(0); } 55% { transform: skew(-18deg, 8deg); } 100% { transform: skew(0); } }
 @keyframes flipDemo { from { transform: rotateY(0); } to { transform: rotateY(180deg); } }
 @keyframes originDemo { from { transform: scale(.18); } to { transform: scale(1); } }
 @keyframes crossfade { 0% { opacity: 1; filter: saturate(.72); } 50% { opacity: .18; filter: saturate(.72); } 100% { opacity: 1; filter: saturate(1.08); } }
 @keyframes morph { 0% { border-radius: 6px; } 50% { border-radius: 26px 8px 26px 8px; transform: scaleX(1.18); } 100% { border-radius: 999px; } }
+@keyframes sharedDemo { 0% { opacity: .72; transform: translate(calc(var(--distance) * -.72), calc(var(--distance-soft) * .45)) scale(.48); } 55% { opacity: 1; transform: translate(8px, -10px) scale(1.08); } 100% { transform: translate(0) scale(1); } }
 @keyframes layoutDemo { 0% { width: min(42vw, 160px); } 100% { width: min(66vw, 260px); } }
 @keyframes collapseDemo { 0% { transform: scaleY(.22); opacity: .55; } 100% { transform: scaleY(1); opacity: 1; } }
-@keyframes directionDemo { from { opacity: 0; transform: translateX(92px); } to { opacity: 1; transform: translateX(-38px); } }
-@keyframes scrollReveal { from { opacity: 0; transform: translateY(72px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes directionDemo { from { opacity: 0; transform: translateX(calc(var(--route-sign) * var(--distance))); } to { opacity: 1; transform: translateX(calc(var(--route-sign) * var(--distance-soft) * -.7)); } }
+@keyframes scrollReveal { from { opacity: 0; transform: translate(var(--slide-from-x), var(--slide-from-y)); } to { opacity: 1; transform: translateY(0); } }
 @keyframes pressDemo { 0%, 100% { transform: scale(1); } 35% { transform: scale(.9); } }
-@keyframes dragDemo { 0% { transform: translateX(-74px); } 72% { transform: translateX(82px); } 100% { transform: translateX(58px); } }
-@keyframes swipeDemo { to { opacity: 0; transform: translateX(160%) rotate(8deg); } }
-@keyframes rubberDemo { 0% { transform: translateX(0); } 45% { transform: translateX(92px) scaleX(.88); } 70% { transform: translateX(-16px) scaleX(1.05); } 100% { transform: translateX(0); } }
+@keyframes holdConfirm { 0% { filter: saturate(.9); } 72% { filter: saturate(1.16); } 100% { filter: saturate(1.06); } }
+@keyframes holdFill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes dragDemo { 0% { transform: translateX(calc(var(--distance) * -.86)); } 72% { transform: translateX(var(--distance)); } 100% { transform: translateX(var(--distance-soft)); } }
+@keyframes swipeDemo { to { opacity: 0; transform: translate(var(--slide-from-x), var(--slide-from-y)) rotate(calc(8deg * var(--route-sign))); } }
+@keyframes rubberDemo { 0% { transform: translateX(0); } 45% { transform: translateX(var(--distance)) scaleX(.88); } 70% { transform: translateX(calc(var(--distance-soft) * -.3)) scaleX(1.05); } 100% { transform: translateX(0); } }
 @keyframes shake { 10%, 90% { transform: translateX(-3px); } 20%, 80% { transform: translateX(6px); } 30%, 50%, 70% { transform: translateX(-10px); } 40%, 60% { transform: translateX(10px); } }
 @keyframes ripple { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(5.2); } }
-@keyframes springDemo { 0% { transform: translateY(66px) scale(.8); } 58% { transform: translateY(-16px) scale(1.08); } 78% { transform: translateY(8px) scale(.98); } 100% { transform: translateY(0) scale(1); } }
+@keyframes springDemo { 0% { transform: translateY(66px) scale(.8); } 58% { transform: translateY(calc(var(--bounce-scale) * -14px)) scale(var(--bounce-scale)); } 78% { transform: translateY(8px) scale(.98); } 100% { transform: translateY(0) scale(1); } }
 @keyframes marquee { from { transform: translateX(125%); } to { transform: translateX(-125%); } }
 @keyframes orbit { from { transform: rotate(0deg) translateX(70px) rotate(0deg); } to { transform: rotate(360deg) translateX(70px) rotate(-360deg); } }
 @keyframes pulse { from { opacity: .62; transform: scale(.96); } to { opacity: 1; transform: scale(1.08); } }
@@ -781,10 +1009,10 @@ input[type="range"] {
 @keyframes ticker { from { transform: translateY(36px); } to { transform: translateY(0); } }
 @keyframes typewriter { from { width: 0; } to { width: 9ch; } }
 @keyframes performanceDemo { from { transform: translateX(-96px); } to { transform: translateX(96px); } }
-@keyframes anticipation { 0% { transform: translateX(0); } 22% { transform: translateX(-28px) scale(.96); } 100% { transform: translateX(86px); } }
-@keyframes followThrough { 0% { transform: translateX(-70px) rotate(-8deg); } 62% { transform: translateX(48px) rotate(12deg); } 82% { transform: translateX(32px) rotate(-4deg); } 100% { transform: translateX(38px) rotate(0); } }
-@keyframes squash { 0% { transform: translateY(-52px) scale(1, 1); } 45% { transform: translateY(42px) scale(1.2, .72); } 70% { transform: translateY(8px) scale(.86, 1.12); } 100% { transform: translateY(0) scale(1); } }
-@keyframes trailMove { from { transform: translateX(-86px); } to { transform: translateX(86px); } }
+@keyframes anticipation { 0% { transform: translateX(0); } 22% { transform: translateX(calc(var(--distance-soft) * -.52)) scale(.96); } 100% { transform: translateX(var(--distance)); } }
+@keyframes followThrough { 0% { transform: translateX(calc(var(--distance) * -.82)) rotate(-8deg); } 62% { transform: translateX(calc(var(--distance-soft) * .9)) rotate(12deg); } 82% { transform: translateX(calc(var(--distance-soft) * .6)) rotate(-4deg); } 100% { transform: translateX(calc(var(--distance-soft) * .72)) rotate(0); } }
+@keyframes squash { 0% { transform: translateY(calc(var(--distance-soft) * -1)) scale(1, 1); } 45% { transform: translateY(var(--distance-soft)) scale(var(--squash-x), var(--squash-y)); } 70% { transform: translateY(8px) scale(.86, 1.12); } 100% { transform: translateY(0) scale(1); } }
+@keyframes trailMove { from { transform: translateX(calc(var(--distance) * -1)); } to { transform: translateX(var(--distance)); } }
 @keyframes galleryPop { from { opacity: 0; transform: translateY(-4px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
 body.motion-reduced .demo-object,

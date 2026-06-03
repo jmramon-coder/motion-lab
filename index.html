@@ -4,6 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Motion Lab</title>
+    <meta name="description" content="Interactive animation vocabulary for designers, developers, and AI prompting.">
+    <meta property="og:title" content="Motion Lab">
+    <meta property="og:description" content="Pick an animation term, see it move, tune it, and copy a practical motion prompt.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="theme-color" content="#eef3f7">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -33,23 +39,23 @@
           <div class="subject-gallery" id="subject-gallery" hidden>
             <button class="subject-option is-active" type="button" data-subject="logo">
               <img src="assets/lab-mark.png" alt="">
-              <span>Logo</span>
+              <span>Logo <small>UI</small></span>
             </button>
             <button class="subject-option" type="button" data-subject="character">
               <img src="assets/subject-character.png" alt="">
-              <span>Character</span>
+              <span>Statue <small>reveal</small></span>
             </button>
             <button class="subject-option" type="button" data-subject="ball">
               <img src="assets/subject-ball.png" alt="">
-              <span>Ball</span>
+              <span>Ball <small>spring</small></span>
             </button>
             <button class="subject-option" type="button" data-subject="plane">
               <img src="assets/subject-plane.png" alt="">
-              <span>Plane</span>
+              <span>Plane <small>path</small></span>
             </button>
             <button class="subject-option" type="button" data-subject="blob">
               <img src="assets/subject-blob.png" alt="">
-              <span>Blob</span>
+              <span>Blob <small>morph</small></span>
             </button>
           </div>
           <div class="subject-size-control" aria-label="Subject size" role="group">
@@ -67,7 +73,7 @@
             <div class="parallax mid"></div>
             <div class="demo-object" id="demo-object">
               <img class="lab-mark" id="subject-image" src="assets/lab-mark.png" alt="" aria-hidden="true">
-              <span class="sr-only" id="demo-label">Fade</span>
+              <span class="demo-label" id="demo-label" aria-hidden="true">Fade</span>
             </div>
           </div>
         </div>
@@ -84,6 +90,19 @@
               <i data-lucide="sliders-horizontal"></i>
               <span>Controls</span>
             </button>
+          </div>
+
+          <div class="use-strip" aria-live="polite">
+            <div class="use-copy">
+              <strong id="use-title">Spring</strong>
+              <span id="use-summary">Motion driven by physics instead of a fixed duration.</span>
+            </div>
+            <div class="use-actions">
+              <button class="mini-action" id="copy-prompt" type="button">Prompt</button>
+              <button class="mini-action" id="copy-link" type="button">Link</button>
+              <button class="mini-action" id="copy-x" type="button">X</button>
+            </div>
+            <p class="copy-feedback" id="copy-feedback" aria-live="polite"></p>
           </div>
 
           <section class="panel-view is-active" id="library-panel" role="tabpanel" aria-labelledby="library-tab">
@@ -118,6 +137,8 @@
                   <input id="perspective" type="range" min="260" max="1400" step="20" value="720">
                 </label>
               </div>
+
+              <div class="context-controls" id="context-controls" aria-live="polite"></div>
 
               <div class="segmented" role="group" aria-label="Easing">
                 <button class="segment is-active" data-ease="cubic-bezier(.2,.8,.2,1)" type="button">Ease-out</button>

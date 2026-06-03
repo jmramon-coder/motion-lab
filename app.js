@@ -34,7 +34,7 @@ const groups = [
     terms: [
       ["Crossfade", "One element fades out as another fades in, in the same spot.", "crossfade"],
       ["Morph", "One shape smoothly turns into another shape.", "morph"],
-      ["Shared element transition", "An element travels and transforms from one position into another.", "layout"],
+      ["Shared element transition", "An element travels and transforms from one position into another.", "shared"],
       ["Layout animation", "When an element's size or position changes, it animates to the new spot instead of snapping.", "layout"],
       ["Accordion / Collapse", "A section smoothly expands and collapses its height to show or hide content.", "collapse"],
       ["Direction-aware transition", "Content slides one way going forward and the opposite way going back.", "direction"]
@@ -53,7 +53,7 @@ const groups = [
     name: "Feedback & Interaction",
     terms: [
       ["Press / Tap feedback", "A subtle scale-down when an element is clicked, so it feels physical.", "press"],
-      ["Hold to confirm", "A progress effect that fills up while the user holds a button.", "reveal"],
+      ["Hold to confirm", "A progress effect that fills up while the user holds a button.", "hold"],
       ["Drag", "Moving an element by grabbing it, often with momentum when released.", "drag"],
       ["Swipe to dismiss", "Dragging an element off-screen to close it, like a drawer or toast.", "swipe"],
       ["Rubber-banding", "Resistance and snap-back when you drag past a boundary.", "rubber"],
@@ -134,6 +134,7 @@ const demoIcons = {
   rotate: "rotate-cw",
   rubber: "waves",
   scale: "scan",
+  shared: "maximize-2",
   scroll: "mouse",
   shake: "vibrate",
   shimmer: "sparkles",
@@ -169,6 +170,13 @@ const subjectSizeSlider = document.querySelector(".size-slider");
 const reducedMotion = document.querySelector("#reduced-motion");
 const panelSwitchButtons = document.querySelectorAll(".panel-switch-button");
 const panelViews = document.querySelectorAll(".panel-view");
+const contextControls = document.querySelector("#context-controls");
+const useTitle = document.querySelector("#use-title");
+const useSummary = document.querySelector("#use-summary");
+const copyPromptButton = document.querySelector("#copy-prompt");
+const copyLinkButton = document.querySelector("#copy-link");
+const copyXButton = document.querySelector("#copy-x");
+const copyFeedback = document.querySelector("#copy-feedback");
 
 const controls = {
   duration: document.querySelector("#duration"),
@@ -178,16 +186,100 @@ const controls = {
 };
 
 let activeGroup = 0;
-let activeTerm = flatTerms[0];
+let activeTerm = flatTerms.find(term => term.name === "Spring") || flatTerms[0];
 let loopEnabled = false;
 let loopTimer = 0;
 let isSubjectSizing = false;
+let currentSubject = "logo";
+let currentEase = "ease-out";
+let booting = true;
+let copyTimer = 0;
+const textDemos = new Set(["stagger", "marquee", "ticker", "typewriter"]);
+const contextState = {
+  direction: "right",
+  distance: 86,
+  origin: "bottom-left",
+  bounce: 14,
+  intensity: 100,
+  count: 7,
+  text: "MotionLab",
+  target: 12480
+};
+const defaultShareState = {
+  subject: "logo",
+  size: "68",
+  duration: "720",
+  delay: "80",
+  stagger: "80",
+  perspective: "720",
+  ease: "ease-out",
+  direction: "right",
+  distance: "86",
+  origin: "bottom-left",
+  bounce: "14",
+  intensity: "100",
+  count: "7",
+  target: "12480",
+  text: "MotionLab"
+};
 const subjectAssets = {
   logo: "assets/lab-mark.png",
   character: "assets/subject-character.png",
   ball: "assets/subject-ball.png",
   plane: "assets/subject-plane.png",
   blob: "assets/subject-blob.png"
+};
+
+const easeOptions = {
+  "ease-out": "cubic-bezier(.2,.8,.2,1)",
+  "ease-in-out": "cubic-bezier(.65,0,.35,1)",
+  linear: "linear",
+  springy: "cubic-bezier(.34,1.56,.64,1)"
+};
+
+const prompts = {
+  fade: "Animate this element with a simple fade using opacity only. Keep it short, subtle, and purposeful so it supports the state change without drawing attention to itself.",
+  slide: "Animate this element with a slide-in from the selected direction. Pair the movement with a light fade and use an ease-out curve so it responds quickly and settles gently.",
+  scale: "Animate this element by scaling it from smaller to full size. Pair the scale with opacity and keep the transform origin consistent with where the element comes from.",
+  pop: "Animate this element with a pop-in: scale up quickly, overshoot slightly, then settle back to normal size. Keep the bounce playful but restrained.",
+  reveal: "Reveal this content by animating a mask or clip-path from one edge to the other. Use the reveal to show hierarchy or progression, not as decoration.",
+  keyframes: "Animate this element through several key poses instead of one direct movement. Use the middle keyframe to clarify the path and make the motion feel intentional.",
+  stagger: "Animate these items with a stagger so each one starts shortly after the previous item. Keep the delay small enough that the sequence feels connected.",
+  steps: "Use a stepped animation where the element jumps through discrete states instead of interpolating smoothly. This is useful for counters, timers, and mechanical UI states.",
+  translate: "Move this element along the X/Y axis with transform: translate. Use transform instead of top or left so the motion stays smooth.",
+  rotate: "Rotate this element around a clear anchor point. Keep the speed and origin consistent so the spin feels physical instead of random.",
+  skew: "Skew this element briefly to suggest speed or impact, then return it to its normal shape. Use the distortion sparingly.",
+  flip: "Animate this element with a 3D flip using rotateY or rotateX. Add perspective so the depth is visible and keep the motion short.",
+  origin: "Animate this element from the trigger point instead of its center. Set the transform origin to match where the interaction started.",
+  trail: "Animate this subject with a motion trail that follows the direction of travel. Use faint ghosted copies so the trail implies speed without obscuring the subject.",
+  crossfade: "Crossfade between two states in the same position. Fade the old state out while the new state fades in so the user understands the replacement.",
+  morph: "Morph this shape smoothly from one form into another. Keep the identity of the element visible throughout the transition.",
+  shared: "Animate this as a shared element transition: move and scale the same visual object from its starting position to its destination instead of replacing it abruptly.",
+  layout: "Animate layout changes so the element moves and resizes into its new position instead of snapping. Preserve spatial continuity.",
+  collapse: "Animate this section open and closed with height or scale plus opacity. Keep the timing quick because users may trigger it often.",
+  direction: "Animate navigation with direction awareness: move forward in one direction and back in the opposite direction so the user understands spatial order.",
+  scroll: "Reveal this element as it enters the viewport with a subtle fade and upward movement. Keep scroll motion calm and avoid surprising the user.",
+  parallax: "Create parallax by moving background and foreground layers at different speeds. Use small offsets so the depth supports the content.",
+  press: "Add tap feedback by scaling the element down slightly on press, then returning it to normal. The motion should feel immediate.",
+  hold: "Animate a hold-to-confirm action with progress filling while the user holds. Make the progress visible and cancelable before confirmation.",
+  drag: "Let this element be dragged with momentum. Preserve velocity on release so the movement feels physical and interruptible.",
+  swipe: "Animate this element being dismissed by swiping it off-screen. Fade and rotate it slightly as it crosses the threshold.",
+  rubber: "Add rubber-banding at the boundary: resist the drag, then snap back with a small overshoot so the limit feels physical.",
+  shake: "Use a short shake to signal an invalid action. Keep the distance small and the duration brief so it reads as feedback, not punishment.",
+  ripple: "Trigger a ripple from the tap point. The circle should expand and fade quickly to confirm the interaction.",
+  spring: "Animate this element with spring motion using tension and damping instead of a fixed-feeling duration. Let it overshoot slightly and settle.",
+  marquee: "Loop this content as a marquee with constant linear speed. Reserve this for ambient or decorative motion, not important text.",
+  orbit: "Animate this element in an orbit around a center point. Keep the path continuous and predictable.",
+  pulse: "Use a gentle pulse in scale or opacity to draw attention. Keep it subtle for frequently viewed UI.",
+  float: "Add a slow floating idle animation so the subject feels alive while waiting for interaction.",
+  blur: "Animate blur away as the element resolves into focus. Use blur to soften transitions, not to hide important content.",
+  line: "Animate a line drawing effect so a path appears to draw itself in. This works best for icons, marks, and route/path visuals.",
+  shimmer: "Show a skeleton shimmer while content loads. Keep it lightweight and replace it as soon as real content is available.",
+  ticker: "Animate numbers with a ticker effect and tabular numbers so digits do not shift sideways while changing.",
+  typewriter: "Reveal text one character at a time with a typewriter animation. Use it for short labels or moments of emphasis only.",
+  anticipation: "Add anticipation by moving slightly opposite the final direction before the main motion. This prepares the viewer for what happens next.",
+  follow: "Add follow-through so the element continues slightly after the main motion and then settles. This gives the motion weight.",
+  squash: "Use squash and stretch during impact or bounce. Compress on contact and stretch during movement to imply weight and flexibility."
 };
 
 function switchPanel(panel) {
@@ -202,6 +294,244 @@ function switchPanel(panel) {
     view.classList.toggle("is-active", isActive);
     view.hidden = !isActive;
   });
+}
+
+function slugForTerm(term) {
+  return term.name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+function termFromSlug(slug) {
+  if (!slug) return null;
+  return flatTerms.find(term => slugForTerm(term) === slug || term.demo === slug || term.name === slug) || null;
+}
+
+function bestUseFor(term) {
+  const uses = {
+    "Spring": "Best for physical UI responses and interrupted motion.",
+    "Origin-aware animation": "Best for popovers, menus, and elements opened from a trigger.",
+    "Shared element transition": "Best for thumbnail-to-detail and card expansion flows.",
+    "Stagger": "Best for lists, menus, and grouped entrances.",
+    "Swipe to dismiss": "Best for toasts, drawers, and dismissible cards.",
+    "Hold to confirm": "Best for destructive or high-friction actions.",
+    "Number ticker": "Best for metrics, counters, timers, and dashboards.",
+    "Typewriter": "Best for short labels or generated text moments.",
+    "Accordion / Collapse": "Best for compact settings, FAQs, and dense mobile panels.",
+    "Squash & stretch": "Best for balls, blobs, and playful physical motion."
+  };
+  return uses[term.name] || term.definition;
+}
+
+function promptFor(term) {
+  return prompts[term.demo] || `Animate this element with ${term.name.toLowerCase()}. ${term.definition}`;
+}
+
+function currentUrl() {
+  const url = new URL(window.location.href);
+  url.search = "";
+  const setIfChanged = (key, value) => {
+    const normalized = String(value);
+    if (defaultShareState[key] === normalized) {
+      url.searchParams.delete(key);
+    } else {
+      url.searchParams.set(key, normalized);
+    }
+  };
+  url.searchParams.set("motion", slugForTerm(activeTerm));
+  setIfChanged("subject", currentSubject);
+  setIfChanged("size", subjectSize.value);
+  setIfChanged("duration", controls.duration.value);
+  setIfChanged("delay", controls.delay.value);
+  setIfChanged("stagger", controls.stagger.value);
+  setIfChanged("perspective", controls.perspective.value);
+  setIfChanged("ease", currentEase);
+  setIfChanged("direction", contextState.direction);
+  setIfChanged("distance", contextState.distance);
+  setIfChanged("origin", contextState.origin);
+  setIfChanged("bounce", contextState.bounce);
+  setIfChanged("intensity", contextState.intensity);
+  setIfChanged("count", contextState.count);
+  setIfChanged("target", contextState.target);
+  if (activeTerm.demo === "typewriter") {
+    setIfChanged("text", contextState.text);
+  }
+  if (loopEnabled) {
+    url.searchParams.set("loop", "1");
+  } else {
+    url.searchParams.delete("loop");
+  }
+  return url.toString();
+}
+
+function syncUrlState() {
+  if (booting) return;
+  window.history.replaceState(null, "", currentUrl());
+}
+
+function xPostFor(term) {
+  return [
+    `Motion term: ${term.name}`,
+    "",
+    term.definition,
+    "",
+    "I am using Motion Lab to see it live, tune the timing, and copy a cleaner animation prompt.",
+    "",
+    currentUrl(),
+    "",
+    "What motion term should I add next?"
+  ].join("\n");
+}
+
+async function copyText(text, label) {
+  window.clearTimeout(copyTimer);
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.left = "-9999px";
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    textarea.remove();
+  }
+  copyFeedback.textContent = `${label} copied`;
+  copyTimer = window.setTimeout(() => {
+    copyFeedback.textContent = "";
+  }, 1600);
+}
+
+function updateUseStrip() {
+  useTitle.textContent = activeTerm.name;
+  useSummary.textContent = bestUseFor(activeTerm);
+}
+
+function setDirection(direction) {
+  contextState.direction = direction;
+  const directions = {
+    left: ["120%", "0", "-1"],
+    right: ["-120%", "0", "1"],
+    top: ["0", "-120%", "1"],
+    bottom: ["0", "120%", "1"]
+  };
+  const [x, y, route] = directions[direction] || directions.right;
+  document.documentElement.style.setProperty("--slide-from-x", x);
+  document.documentElement.style.setProperty("--slide-from-y", y);
+  document.documentElement.style.setProperty("--route-sign", route);
+}
+
+function setOrigin(origin) {
+  contextState.origin = origin;
+  const origins = {
+    center: ["50%", "50%"],
+    "top-left": ["8%", "8%"],
+    "bottom-left": ["8%", "92%"],
+    "top-right": ["92%", "8%"],
+    "bottom-right": ["92%", "92%"]
+  };
+  const [x, y] = origins[origin] || origins["bottom-left"];
+  document.documentElement.style.setProperty("--origin-x", x);
+  document.documentElement.style.setProperty("--origin-y", y);
+}
+
+function syncContextVars() {
+  document.documentElement.style.setProperty("--distance", `${contextState.distance}px`);
+  document.documentElement.style.setProperty("--distance-soft", `${Math.round(contextState.distance * .62)}px`);
+  document.documentElement.style.setProperty("--bounce-scale", `${1 + contextState.bounce / 100}`);
+  document.documentElement.style.setProperty("--squash-x", `${1 + contextState.bounce / 140}`);
+  document.documentElement.style.setProperty("--squash-y", `${Math.max(.52, 1 - contextState.bounce / 110)}`);
+  document.documentElement.style.setProperty("--motion-intensity", `${contextState.intensity / 100}`);
+  setDirection(contextState.direction);
+  setOrigin(contextState.origin);
+}
+
+function contextConfigFor(term) {
+  if (["slide", "direction", "scroll", "swipe"].includes(term.demo)) {
+    return { kind: "direction", label: "Direction" };
+  }
+  if (["translate", "drag", "rubber", "trail", "keyframes"].includes(term.demo)) {
+    return { kind: "distance", label: "Distance" };
+  }
+  if (["spring", "pop", "squash", "follow", "anticipation"].includes(term.demo)) {
+    return { kind: "bounce", label: "Bounce" };
+  }
+  if (term.demo === "origin") {
+    return { kind: "origin", label: "Origin" };
+  }
+  if (term.demo === "stagger") {
+    return { kind: "count", label: "Items" };
+  }
+  if (term.demo === "ticker") {
+    return { kind: "target", label: "Target" };
+  }
+  if (term.demo === "typewriter") {
+    return { kind: "text", label: "Text" };
+  }
+  return { kind: "intensity", label: "Intensity" };
+}
+
+function renderContextControls() {
+  const config = contextConfigFor(activeTerm);
+  if (config.kind === "direction") {
+    contextControls.innerHTML = `
+      <div class="context-control">
+        <span>${config.label}</span>
+        <div class="chip-grid" role="group" aria-label="Direction">
+          ${["left", "right", "top", "bottom"].map(direction => `
+            <button class="chip ${contextState.direction === direction ? "is-active" : ""}" data-context="direction" data-value="${direction}" type="button">${direction}</button>
+          `).join("")}
+        </div>
+      </div>
+    `;
+    return;
+  }
+  if (config.kind === "origin") {
+    const origins = [
+      ["center", "Center"],
+      ["top-left", "Top left"],
+      ["bottom-left", "Bottom left"],
+      ["top-right", "Top right"],
+      ["bottom-right", "Bottom right"]
+    ];
+    contextControls.innerHTML = `
+      <div class="context-control">
+        <span>${config.label}</span>
+        <div class="chip-grid origin-grid" role="group" aria-label="Transform origin">
+          ${origins.map(([value, label]) => `
+            <button class="chip ${contextState.origin === value ? "is-active" : ""}" data-context="origin" data-value="${value}" type="button">${label}</button>
+          `).join("")}
+        </div>
+      </div>
+    `;
+    return;
+  }
+  if (config.kind === "text") {
+    contextControls.innerHTML = `
+      <label class="control context-control">
+        <span>${config.label} <strong>${contextState.text}</strong></span>
+        <input data-context="text" type="text" maxlength="14" value="${contextState.text}">
+      </label>
+    `;
+    return;
+  }
+  const ranges = {
+    distance: [36, 132, 2, contextState.distance, "px"],
+    bounce: [0, 34, 1, contextState.bounce, "%"],
+    count: [3, 12, 1, contextState.count, ""],
+    target: [100, 99000, 100, contextState.target, ""],
+    intensity: [35, 140, 5, contextState.intensity, "%"]
+  };
+  const [min, max, step, value, unit] = ranges[config.kind];
+  contextControls.innerHTML = `
+    <label class="control context-control">
+      <span>${config.label} <strong>${value}${unit}</strong></span>
+      <input data-context="${config.kind}" type="range" min="${min}" max="${max}" step="${step}" value="${value}">
+    </label>
+  `;
 }
 
 function renderLibrary() {
@@ -245,15 +575,18 @@ function setActiveTerm(term, shouldPlay = true) {
   conceptTitle.textContent = term.name;
   conceptDefinition.textContent = term.definition;
   demoLabel.textContent = labelFor(term);
+  updateUseStrip();
+  renderContextControls();
   renderLibrary();
+  syncUrlState();
   if (shouldPlay) playDemo();
 }
 
 function labelFor(term) {
-  if (term.demo === "ticker") return "12,480";
-  if (term.demo === "typewriter") return "MotionLab";
+  if (term.demo === "ticker") return Number(contextState.target).toLocaleString("en-US");
+  if (term.demo === "typewriter") return contextState.text || "MotionLab";
   if (term.demo === "marquee") return "Continuous loop";
-  if (term.demo === "stagger") return "STAGGER";
+  if (term.demo === "stagger") return "MOTION".slice(0, Math.max(3, Math.min(6, contextState.count)));
   return term.name.split(" / ")[0].replace(/\(.+\)/, "").trim();
 }
 
@@ -263,14 +596,18 @@ function playDemo() {
   demoObject.className = "demo-object";
   demoStage.className = "demo-stage";
   scrollWorld.className = "scroll-world";
+  syncContextVars();
 
   if (demo === "stagger") {
-    demoLabel.innerHTML = labelFor(activeTerm).split("").map((letter, index) =>
+    const letters = Array.from({ length: contextState.count }, (_, index) => labelFor(activeTerm)[index % labelFor(activeTerm).length]);
+    demoLabel.innerHTML = letters.map((letter, index) =>
       `<span style="animation-delay: calc(var(--delay) + ${index} * var(--stagger))">${letter}</span>`
     ).join("");
   } else {
     demoLabel.textContent = labelFor(activeTerm);
   }
+
+  demoObject.classList.toggle("text-demo", textDemos.has(demo));
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
@@ -281,7 +618,7 @@ function playDemo() {
         return;
       }
       if (demo === "ripple") {
-        demoObject.classList.add("animate-press");
+        demoObject.classList.add("animate-ripple");
         scheduleLoop();
         return;
       }
@@ -307,6 +644,7 @@ function syncControls() {
   document.querySelector("#delay-value").textContent = `${controls.delay.value}ms`;
   document.querySelector("#stagger-value").textContent = `${controls.stagger.value}ms`;
   document.querySelector("#perspective-value").textContent = `${controls.perspective.value}px`;
+  syncUrlState();
 }
 
 function syncSubjectSize() {
@@ -314,16 +652,19 @@ function syncSubjectSize() {
   const range = Number(subjectSize.max) - Number(subjectSize.min);
   const progress = ((Number(subjectSize.value) - Number(subjectSize.min)) / range) * 100;
   document.documentElement.style.setProperty("--subject-size-progress", `${progress}%`);
+  syncUrlState();
 }
 
 function setSubject(subject) {
   if (!subjectAssets[subject]) return;
+  currentSubject = subject;
   subjectImage.src = subjectAssets[subject];
   document.querySelectorAll(".subject-option").forEach(option => {
     option.classList.toggle("is-active", option.dataset.subject === subject);
   });
   subjectGallery.hidden = true;
   subjectToggle.setAttribute("aria-expanded", "false");
+  syncUrlState();
   playDemo();
 }
 
@@ -346,7 +687,40 @@ document.querySelector(".segmented").addEventListener("click", event => {
   if (!button) return;
   document.querySelectorAll(".segment").forEach(segment => segment.classList.remove("is-active"));
   button.classList.add("is-active");
+  currentEase = Object.entries(easeOptions).find(([, value]) => value === button.dataset.ease)?.[0] || "ease-out";
   document.documentElement.style.setProperty("--ease", button.dataset.ease);
+  syncUrlState();
+  playDemo();
+});
+
+contextControls.addEventListener("input", event => {
+  const input = event.target.closest("[data-context]");
+  if (!input) return;
+  const key = input.dataset.context;
+  if (key === "text") {
+    contextState.text = input.value || "MotionLab";
+    const valueLabel = input.closest(".context-control")?.querySelector("strong");
+    if (valueLabel) valueLabel.textContent = contextState.text;
+  } else {
+    contextState[key] = Number(input.value);
+    const valueLabel = input.closest(".context-control")?.querySelector("strong");
+    if (valueLabel) {
+      const suffix = key === "distance" ? "px" : key === "bounce" || key === "intensity" ? "%" : "";
+      valueLabel.textContent = `${contextState[key]}${suffix}`;
+    }
+  }
+  syncContextVars();
+  syncUrlState();
+  playDemo();
+});
+
+contextControls.addEventListener("click", event => {
+  const button = event.target.closest("[data-context]");
+  if (!button || !button.matches("button")) return;
+  contextState[button.dataset.context] = button.dataset.value;
+  renderContextControls();
+  syncContextVars();
+  syncUrlState();
   playDemo();
 });
 
@@ -429,15 +803,78 @@ reducedMotion.addEventListener("change", () => {
   playDemo();
 });
 
+copyPromptButton.addEventListener("click", () => {
+  copyText(promptFor(activeTerm), "Prompt");
+});
+
+copyLinkButton.addEventListener("click", () => {
+  copyText(currentUrl(), "Link");
+});
+
+copyXButton.addEventListener("click", () => {
+  copyText(xPostFor(activeTerm), "X post");
+});
+
+function restoreStateFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const term = termFromSlug(params.get("motion"));
+  if (term) activeTerm = term;
+  activeGroup = activeTerm.groupIndex;
+
+  Object.entries(controls).forEach(([key, control]) => {
+    const value = params.get(key);
+    if (value !== null) control.value = value;
+  });
+
+  const size = params.get("size");
+  if (size !== null) subjectSize.value = size;
+
+  const ease = params.get("ease");
+  if (ease && easeOptions[ease]) {
+    currentEase = ease;
+    document.documentElement.style.setProperty("--ease", easeOptions[ease]);
+    document.querySelectorAll(".segment").forEach(segment => {
+      const segmentEase = Object.entries(easeOptions).find(([, value]) => value === segment.dataset.ease)?.[0] || "ease-out";
+      segment.classList.toggle("is-active", segmentEase === ease);
+    });
+  }
+
+  const subject = params.get("subject");
+  if (subject && subjectAssets[subject]) {
+    currentSubject = subject;
+    subjectImage.src = subjectAssets[subject];
+    document.querySelectorAll(".subject-option").forEach(option => {
+      option.classList.toggle("is-active", option.dataset.subject === subject);
+    });
+  }
+
+  ["direction", "origin", "text"].forEach(key => {
+    const value = params.get(key);
+    if (value) contextState[key] = value;
+  });
+  ["distance", "bounce", "intensity", "count", "target"].forEach(key => {
+    const value = params.get(key);
+    if (value !== null && !Number.isNaN(Number(value))) contextState[key] = Number(value);
+  });
+
+  loopEnabled = params.get("loop") === "1";
+  loopButton.classList.toggle("is-active", loopEnabled);
+  loopButton.setAttribute("aria-pressed", String(loopEnabled));
+}
+
 if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
   reducedMotion.checked = true;
   document.body.classList.add("motion-reduced");
 }
 
+restoreStateFromUrl();
 renderLibrary();
 syncControls();
 syncSubjectSize();
+syncContextVars();
 setActiveTerm(activeTerm, false);
+booting = false;
+syncUrlState();
 playDemo();
 
 if (window.lucide) {
